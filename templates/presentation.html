@@ -1,0 +1,317 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+<meta charset="UTF-8">
+
+<meta name="viewport"
+content="width=device-width, initial-scale=1.0">
+
+<title>AI Presentation Generator</title>
+
+<link
+href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
+rel="stylesheet">
+
+<link
+rel="stylesheet"
+href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+
+<link
+rel="stylesheet"
+href="{{ url_for('static',filename='css/presentation.css') }}">
+
+</head>
+
+<body>
+
+<div class="app-container">
+
+<!-- SIDEBAR -->
+
+<aside class="sidebar">
+
+<div class="logo">
+
+🤖 AI Research
+
+</div>
+
+<ul>
+
+<li>
+
+<a href="/dashboard">
+
+<i class="bi bi-grid-fill"></i>
+
+Dashboard
+
+</a>
+
+</li>
+
+<li>
+
+<a href="/reports">
+
+<i class="bi bi-file-earmark-text-fill"></i>
+
+AI Reports
+
+</a>
+
+</li>
+
+<li class="active">
+
+<a href="/presentation">
+
+<i class="bi bi-file-earmark-ppt-fill"></i>
+
+Presentation
+
+</a>
+
+</li>
+
+<li>
+
+<a href="/analyzer">
+
+<i class="bi bi-search"></i>
+
+Document Analyzer
+
+</a>
+
+</li>
+
+<li>
+
+<a href="/chat">
+
+<i class="bi bi-robot"></i>
+
+AI Chat
+
+</a>
+
+</li>
+
+<li>
+
+<a href="/logout">
+
+<i class="bi bi-box-arrow-right"></i>
+
+Logout
+
+</a>
+
+</li>
+
+</ul>
+
+</aside>
+
+<!-- MAIN -->
+
+<main class="main">
+
+<div class="topbar">
+
+<div>
+
+<h2>
+
+AI Presentation Generator
+
+</h2>
+
+<p>
+
+Generate professional PowerPoint presentations with AI.
+
+</p>
+
+</div>
+
+<div class="profile">
+
+👋 {{ username }}
+
+</div>
+
+</div>
+
+<div class="workspace">
+
+<!-- LEFT -->
+
+<div class="card workspace-card">
+
+<div class="card-header">
+
+Presentation Details
+
+</div>
+
+<div class="card-body">
+
+<label>
+
+Presentation Topic
+
+</label>
+
+<input
+
+id="pptTopic"
+
+class="form-control"
+
+placeholder="Enter topic">
+
+<br>
+
+<label>
+
+Number of Slides
+
+</label>
+
+<select
+
+id="slideCount"
+
+class="form-select">
+
+<option>5</option>
+
+<option>8</option>
+
+<option>10</option>
+
+<option>15</option>
+
+<option>20</option>
+
+</select>
+
+<br>
+
+<label>
+
+Presentation Theme
+
+</label>
+
+<select
+
+id="pptTheme"
+
+class="form-select">
+
+<option>Professional</option>
+
+<option>Business</option>
+
+<option>Education</option>
+
+<option>Modern</option>
+
+<option>Technology</option>
+
+</select>
+
+<br>
+
+<button
+
+id="generatePresentationBtn"
+
+class="btn btn-primary w-100">
+
+<i class="bi bi-stars"></i>
+
+Generate Presentation
+
+</button>
+
+</div>
+
+</div>
+
+<!-- RIGHT -->
+
+<div class="card workspace-card">
+
+<div class="card-header">
+
+Presentation Preview
+
+</div>
+
+<div
+
+id="slidePreview"
+
+class="card-body preview-area">
+
+<div class="empty-state">
+
+<i class="bi bi-file-earmark-ppt display-1"></i>
+
+<h4>
+
+Presentation Preview
+
+</h4>
+
+<p>
+
+Your presentation preview will appear here.
+
+</p>
+
+</div>
+
+</div>
+
+</div>
+
+</div>
+
+<div class="card workspace-card mt-4">
+
+<div class="card-header">
+
+Generation Status
+
+</div>
+
+<div
+
+id="pptStatus"
+
+class="card-body">
+
+Ready to generate presentation.
+
+</div>
+
+</div>
+
+</main>
+
+</div>
+
+<script src="{{ url_for('static',filename='js/common.js') }}"></script>
+
+<script src="{{ url_for('static',filename='js/presentation.js') }}"></script>
+
+</body>
+
+</html>

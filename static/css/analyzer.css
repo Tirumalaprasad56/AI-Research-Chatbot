@@ -1,0 +1,520 @@
+/* ==========================================
+   GOOGLE FONT
+========================================== */
+
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Poppins:wght@600;700&display=swap');
+
+/* ==========================================
+   GLOBAL
+========================================== */
+
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+}
+
+body{
+    background:#F8FAFC;
+    font-family:'Inter',sans-serif;
+    color:#1E293B;
+}
+
+/* ==========================================
+   APP LAYOUT
+========================================== */
+
+.app-container{
+    display:flex;
+    min-height:100vh;
+}
+
+/* ==========================================
+   SIDEBAR
+========================================== */
+
+.sidebar{
+
+    width:260px;
+
+    background:#0F172A;
+
+    color:white;
+
+    position:fixed;
+
+    left:0;
+
+    top:0;
+
+    bottom:0;
+
+    padding:30px 20px;
+
+    overflow:auto;
+
+}
+
+.logo{
+
+    font-size:25px;
+
+    font-weight:700;
+
+    text-align:center;
+
+    margin-bottom:40px;
+
+    font-family:'Poppins',sans-serif;
+
+}
+
+.sidebar ul{
+
+    list-style:none;
+
+    padding:0;
+
+}
+
+.sidebar li{
+
+    margin-bottom:10px;
+
+}
+
+.sidebar a{
+
+    display:flex;
+
+    align-items:center;
+
+    gap:12px;
+
+    padding:14px 18px;
+
+    text-decoration:none;
+
+    color:#CBD5E1;
+
+    border-radius:12px;
+
+    transition:.3s;
+
+}
+
+.sidebar a:hover{
+
+    background:#1E293B;
+
+    color:white;
+
+}
+
+.sidebar .active a{
+
+    background:#2563EB;
+
+    color:white;
+
+}
+
+/* ==========================================
+   MAIN
+========================================== */
+
+.main{
+
+    margin-left:260px;
+
+    flex:1;
+
+    padding:35px;
+
+}
+
+/* ==========================================
+   TOPBAR
+========================================== */
+
+.topbar{
+
+    display:flex;
+
+    justify-content:space-between;
+
+    align-items:center;
+
+    margin-bottom:30px;
+
+}
+
+.topbar h2{
+
+    font-weight:700;
+
+}
+
+.topbar p{
+
+    color:#64748B;
+
+    margin-top:5px;
+
+}
+
+.profile{
+
+    background:white;
+
+    padding:12px 24px;
+
+    border-radius:12px;
+
+    box-shadow:0 8px 25px rgba(0,0,0,.05);
+
+    font-weight:600;
+
+}
+
+/* ==========================================
+   WORKSPACE
+========================================== */
+
+.workspace-row{
+
+    display:grid;
+
+    grid-template-columns:340px 1fr;
+
+    gap:25px;
+
+    margin-bottom:25px;
+
+}
+
+/* ==========================================
+   CARD
+========================================== */
+
+.workspace-card{
+
+    border:none;
+
+    border-radius:18px;
+
+    box-shadow:0 12px 30px rgba(15,23,42,.08);
+
+}
+
+.workspace-card .card-header{
+
+    background:white;
+
+    border:none;
+
+    border-bottom:1px solid #E2E8F0;
+
+    font-weight:600;
+
+    padding:18px;
+
+}
+
+.workspace-card .card-body{
+
+    padding:22px;
+
+}
+
+/* ==========================================
+   DOCUMENT LIST
+========================================== */
+
+#documentList{
+
+    max-height:300px;
+
+    overflow:auto;
+
+}
+
+.history-item{
+
+    display:flex;
+
+    justify-content:space-between;
+
+    align-items:center;
+
+    padding:12px;
+
+    border-radius:10px;
+
+    background:#F8FAFC;
+
+    margin-bottom:10px;
+
+    transition:.25s;
+
+}
+
+.history-item:hover{
+
+    background:#E2E8F0;
+
+    cursor:pointer;
+
+}
+
+/* ==========================================
+   PREVIEW
+========================================== */
+
+.preview-area{
+
+    min-height:400px;
+
+    max-height:400px;
+
+    overflow:auto;
+
+}
+
+/* ==========================================
+   RESULT
+========================================== */
+
+.result-area{
+
+    min-height:400px;
+
+    max-height:400px;
+
+    overflow:auto;
+
+    line-height:1.8;
+
+}
+
+/* ==========================================
+   EMPTY
+========================================== */
+
+.empty-state{
+
+    height:330px;
+
+    display:flex;
+
+    flex-direction:column;
+
+    justify-content:center;
+
+    align-items:center;
+
+    color:#94A3B8;
+
+    text-align:center;
+
+}
+
+.empty-state i{
+
+    font-size:70px;
+
+    margin-bottom:20px;
+
+}
+
+.empty-state h5{
+
+    color:#334155;
+
+}
+
+/* ==========================================
+   ANALYSIS GRID
+========================================== */
+
+.analysis-grid{
+
+    display:grid;
+
+    grid-template-columns:repeat(2,1fr);
+
+    gap:15px;
+
+}
+
+/* ==========================================
+   TOOL CARD
+========================================== */
+
+.tool-card{
+
+    border:none;
+
+    background:white;
+
+    border:2px solid #E2E8F0;
+
+    border-radius:14px;
+
+    padding:18px;
+
+    transition:.3s;
+
+    display:flex;
+
+    flex-direction:column;
+
+    align-items:center;
+
+    gap:10px;
+
+    font-weight:600;
+
+}
+
+.tool-card i{
+
+    font-size:28px;
+
+    color:#2563EB;
+
+}
+
+.tool-card:hover{
+
+    background:#2563EB;
+
+    color:white;
+
+    border-color:#2563EB;
+
+    transform:translateY(-4px);
+
+}
+
+.tool-card:hover i{
+
+    color:white;
+
+}
+
+/* ==========================================
+   FORM
+========================================== */
+
+.form-control{
+
+    border-radius:12px;
+
+    padding:12px;
+
+    border:1px solid #CBD5E1;
+
+}
+
+.form-control:focus{
+
+    box-shadow:none;
+
+    border-color:#2563EB;
+
+}
+
+.btn{
+
+    border-radius:12px;
+
+    padding:10px 20px;
+
+}
+
+/* ==========================================
+   SCROLLBAR
+========================================== */
+
+::-webkit-scrollbar{
+
+    width:8px;
+
+}
+
+::-webkit-scrollbar-thumb{
+
+    background:#CBD5E1;
+
+    border-radius:20px;
+
+}
+
+/* ==========================================
+   RESPONSIVE
+========================================== */
+
+@media(max-width:992px){
+
+.workspace-row{
+
+grid-template-columns:1fr;
+
+}
+
+}
+
+@media(max-width:768px){
+
+.sidebar{
+
+width:80px;
+
+}
+
+.sidebar .logo{
+
+font-size:18px;
+
+}
+
+.sidebar a{
+
+justify-content:center;
+
+font-size:0;
+
+}
+
+.sidebar a i{
+
+font-size:20px;
+
+}
+
+.main{
+
+margin-left:80px;
+
+padding:20px;
+
+}
+
+.topbar{
+
+flex-direction:column;
+
+align-items:flex-start;
+
+gap:15px;
+
+}
+
+.analysis-grid{
+
+grid-template-columns:1fr;
+
+}
+
+}

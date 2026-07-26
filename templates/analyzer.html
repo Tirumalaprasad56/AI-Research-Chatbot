@@ -1,0 +1,437 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+<meta charset="UTF-8">
+
+<meta name="viewport"
+content="width=device-width, initial-scale=1.0">
+
+<title>Document Analyzer</title>
+
+<link
+href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
+rel="stylesheet">
+
+<link
+rel="stylesheet"
+href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+
+<link
+rel="stylesheet"
+href="{{ url_for('static', filename='css/analyzer.css') }}">
+
+</head>
+
+<body>
+
+<div class="app-container">
+
+    <!-- ===================== -->
+    <!-- SIDEBAR -->
+    <!-- ===================== -->
+
+    <aside class="sidebar">
+
+        <div class="logo">
+
+            🤖 AI Research
+
+        </div>
+
+        <ul>
+
+            <li>
+
+                <a href="/dashboard">
+
+                    <i class="bi bi-grid-fill"></i>
+
+                    Dashboard
+
+                </a>
+
+            </li>
+
+            <li>
+
+                <a href="/reports">
+
+                    <i class="bi bi-file-earmark-text-fill"></i>
+
+                    AI Reports
+
+                </a>
+
+            </li>
+
+            <li>
+
+                <a href="/presentation">
+
+                    <i class="bi bi-file-earmark-ppt-fill"></i>
+
+                    Presentation
+
+                </a>
+
+            </li>
+
+            <li class="active">
+
+                <a href="/analyzer">
+
+                    <i class="bi bi-search"></i>
+
+                    Document Analyzer
+
+                </a>
+
+            </li>
+
+            <li>
+
+                <a href="/chat">
+
+                    <i class="bi bi-robot"></i>
+
+                    AI Chat
+
+                </a>
+
+            </li>
+
+            <li>
+
+                <a href="/logout">
+
+                    <i class="bi bi-box-arrow-right"></i>
+
+                    Logout
+
+                </a>
+
+            </li>
+
+        </ul>
+
+    </aside>
+
+    <!-- ===================== -->
+    <!-- MAIN -->
+    <!-- ===================== -->
+
+    <main class="main">
+
+        <!-- Top Bar -->
+
+        <div class="topbar">
+
+            <div>
+
+                <h2>
+
+                    Document Analyzer
+
+                </h2>
+
+                <p>
+
+                    Upload documents and let AI summarize, analyze and answer questions.
+
+                </p>
+
+            </div>
+
+            <div class="profile">
+
+                👋 {{ username }}
+
+            </div>
+
+        </div>
+
+        <!-- Row 1 -->
+
+        <div class="workspace-row">
+
+            <!-- Upload -->
+
+            <div class="card workspace-card">
+
+                <div class="card-header">
+
+                    <i class="bi bi-cloud-upload-fill"></i>
+
+                    Upload Document
+
+                </div>
+
+                <div class="card-body">
+
+                    <input
+
+                    type="file"
+
+                    id="documentFile"
+
+                    class="form-control"
+
+                    accept=".pdf,.docx,.txt">
+
+                    <button
+
+                    id="uploadBtn"
+
+                    class="btn btn-primary w-100 mt-3">
+
+                        <i class="bi bi-upload"></i>
+
+                        Upload Document
+
+                    </button>
+
+                    <hr>
+
+                    <h6>
+
+                        Uploaded Documents
+
+                    </h6>
+
+                    <div id="documentList">
+
+                        No uploaded documents.
+
+                    </div>
+
+                </div>
+
+            </div>
+
+            <!-- Preview -->
+
+            <div class="card workspace-card">
+
+                <div class="card-header">
+
+                    <i class="bi bi-file-earmark-text"></i>
+
+                    Document Preview
+
+                </div>
+
+                <div
+
+                id="report"
+
+                class="card-body preview-area">
+
+                    <div class="empty-state">
+
+                        <i class="bi bi-file-earmark display-1"></i>
+
+                        <h5>
+
+                            No Document Selected
+
+                        </h5>
+
+                        <p>
+
+                            Select a document from the left panel.
+
+                        </p>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+        <!-- Row 2 -->
+
+        <div class="workspace-row">
+
+            <!-- Analysis -->
+
+            <div class="card workspace-card">
+
+                <div class="card-header">
+
+                    AI Analysis Tools
+
+                </div>
+
+                <div class="card-body">
+
+                    <div class="analysis-grid">
+
+                        <button id="summaryBtn" class="tool-card">
+
+                            <i class="bi bi-card-text"></i>
+
+                            <span>Summary</span>
+
+                        </button>
+
+                        <button id="keywordsBtn" class="tool-card">
+
+                            <i class="bi bi-key"></i>
+
+                            <span>Keywords</span>
+
+                        </button>
+
+                        <button id="pointsBtn" class="tool-card">
+
+                            <i class="bi bi-list-check"></i>
+
+                            <span>Key Points</span>
+
+                        </button>
+
+                        <button id="abstractBtn" class="tool-card">
+
+                            <i class="bi bi-journal-text"></i>
+
+                            <span>Abstract</span>
+
+                        </button>
+
+                        <button id="quizBtn" class="tool-card">
+
+                            <i class="bi bi-patch-question"></i>
+
+                            <span>Quiz</span>
+
+                        </button>
+
+                        <button id="interviewBtn" class="tool-card">
+
+                            <i class="bi bi-person-video3"></i>
+
+                            <span>Interview</span>
+
+                        </button>
+
+                        <button id="conceptBtn" class="tool-card">
+
+                            <i class="bi bi-lightbulb"></i>
+
+                            <span>Concepts</span>
+
+                        </button>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+            <!-- Result -->
+
+            <div class="card workspace-card">
+
+                <div class="card-header">
+
+                    AI Analysis Result
+
+                </div>
+
+                <div
+
+                id="analysisResult"
+
+                class="card-body result-area">
+
+                    <div class="empty-state">
+
+                        <i class="bi bi-robot display-1"></i>
+
+                        <h5>
+
+                            Analysis Result
+
+                        </h5>
+
+                        <p>
+
+                            Select an analysis tool to generate AI insights.
+
+                        </p>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+        <!-- Ask AI -->
+
+        <div class="card workspace-card">
+
+            <div class="card-header">
+
+                <i class="bi bi-chat-left-text-fill"></i>
+
+                Ask AI About Document
+
+            </div>
+
+            <div class="card-body">
+
+                <textarea
+
+                id="documentQuestion"
+
+                class="form-control"
+
+                rows="4"
+
+                placeholder="Ask anything about the uploaded document...">
+
+                </textarea>
+
+                <button
+
+                id="askDocumentBtn"
+
+                class="btn btn-success mt-3">
+
+                    <i class="bi bi-send-fill"></i>
+
+                    Ask AI
+
+                </button>
+
+                <hr>
+
+                <div
+
+                id="documentAnswer">
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </main>
+
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+
+<script src="{{ url_for('static', filename='js/common.js') }}"></script>
+
+<script src="{{ url_for('static', filename='js/analyzer.js') }}"></script>
+
+</body>
+
+</html>

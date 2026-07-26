@@ -1,0 +1,782 @@
+/* ==========================================
+   GOOGLE FONT
+========================================== */
+
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+
+/* ==========================================
+   RESET
+========================================== */
+
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+}
+
+body{
+
+    font-family:'Inter',sans-serif;
+
+    background:#F8FAFC;
+
+    color:#1E293B;
+
+}
+
+/* ==========================================
+   APP LAYOUT
+========================================== */
+
+.app-container{
+
+    display:flex;
+
+    min-height:100vh;
+
+}
+
+/* ==========================================
+   SIDEBAR
+========================================== */
+
+.sidebar{
+
+    width:250px;
+
+    background:#0F172A;
+
+    color:white;
+
+    position:fixed;
+
+    top:0;
+
+    left:0;
+
+    bottom:0;
+
+    padding:25px;
+
+    overflow-y:auto;
+
+}
+
+.logo{
+
+    text-align:center;
+
+    font-size:24px;
+
+    font-weight:700;
+
+    margin-bottom:35px;
+
+}
+
+.sidebar ul{
+
+    list-style:none;
+
+    padding:0;
+
+}
+
+.sidebar li{
+
+    margin-bottom:10px;
+
+}
+
+.sidebar a{
+
+    display:flex;
+
+    align-items:center;
+
+    gap:12px;
+
+    padding:13px 18px;
+
+    text-decoration:none;
+
+    color:#CBD5E1;
+
+    border-radius:12px;
+
+    transition:.3s;
+
+}
+
+.sidebar a:hover{
+
+    background:#1E293B;
+
+    color:white;
+
+}
+
+.sidebar .active a{
+
+    background:#2563EB;
+
+    color:white;
+
+}
+
+/* ==========================================
+   MAIN
+========================================== */
+
+.main{
+
+    margin-left:250px;
+
+    flex:1;
+
+    padding:35px;
+
+}
+
+/* ==========================================
+   TOPBAR
+========================================== */
+
+.topbar{
+
+    display:flex;
+
+    justify-content:space-between;
+
+    align-items:center;
+
+    margin-bottom:30px;
+
+}
+
+.topbar h2{
+
+    font-weight:700;
+
+}
+
+.topbar p{
+
+    color:#64748B;
+
+}
+
+.profile{
+
+    background:white;
+
+    padding:12px 22px;
+
+    border-radius:12px;
+
+    font-weight:600;
+
+    box-shadow:0 10px 25px rgba(0,0,0,.06);
+
+}
+/* ==========================================
+   WORKSPACE
+========================================== */
+
+.workspace-row{
+
+    display:grid;
+
+    grid-template-columns:350px 1fr;
+
+    gap:25px;
+
+    margin-bottom:25px;
+
+}
+
+/* ==========================================
+   CARDS
+========================================== */
+
+.workspace-card{
+
+    border:none;
+
+    border-radius:18px;
+
+    overflow:hidden;
+
+    box-shadow:0 10px 30px rgba(15,23,42,.08);
+
+}
+
+.workspace-card .card-header{
+
+    background:white;
+
+    border-bottom:1px solid #E2E8F0;
+
+    padding:18px 22px;
+
+    font-size:18px;
+
+    font-weight:600;
+
+}
+
+.workspace-card .card-body{
+
+    padding:22px;
+
+}
+
+/* ==========================================
+   FORM CONTROLS
+========================================== */
+
+.form-control{
+
+    border-radius:12px;
+
+    border:1px solid #CBD5E1;
+
+    padding:12px;
+
+    font-size:15px;
+
+}
+
+.form-control:focus{
+
+    border-color:#2563EB;
+
+    box-shadow:0 0 0 .15rem rgba(37,99,235,.15);
+
+}
+
+/* ==========================================
+   BUTTONS
+========================================== */
+
+.btn{
+
+    border-radius:12px;
+
+    font-weight:600;
+
+}
+
+.btn-primary{
+
+    background:#2563EB;
+
+    border:none;
+
+}
+
+.btn-primary:hover{
+
+    background:#1D4ED8;
+
+}
+
+.btn-success{
+
+    background:#16A34A;
+
+    border:none;
+
+}
+
+.btn-success:hover{
+
+    background:#15803D;
+
+}
+
+/* ==========================================
+   PAPER LIST
+========================================== */
+
+.history-item{
+
+    display:flex;
+
+    justify-content:space-between;
+
+    align-items:center;
+
+    padding:12px 15px;
+
+    margin-bottom:10px;
+
+    background:#F8FAFC;
+
+    border:1px solid #E2E8F0;
+
+    border-radius:12px;
+
+    transition:.25s;
+
+}
+
+.history-item:hover{
+
+    background:white;
+
+    transform:translateY(-2px);
+
+    box-shadow:0 6px 18px rgba(0,0,0,.06);
+
+}
+
+.paper-name{
+
+    cursor:pointer;
+
+    font-weight:500;
+
+    color:#1E293B;
+
+}
+
+/* ==========================================
+   PREVIEW AREA
+========================================== */
+
+.preview-area{
+
+    min-height:420px;
+
+    max-height:420px;
+
+    overflow:auto;
+
+    background:#FCFCFD;
+
+}
+
+/* ==========================================
+   RESULT AREA
+========================================== */
+
+.result-area{
+
+    min-height:420px;
+
+    max-height:420px;
+
+    overflow:auto;
+
+    background:#FCFCFD;
+
+}
+/* ==========================================
+   AI ANALYSIS TOOLS
+========================================== */
+
+.analysis-grid{
+
+    display:grid;
+
+    grid-template-columns:repeat(2,1fr);
+
+    gap:15px;
+
+}
+
+.tool-card{
+
+    background:#FFFFFF;
+
+    border:1px solid #E2E8F0;
+
+    border-radius:16px;
+
+    padding:22px;
+
+    cursor:pointer;
+
+    transition:.3s;
+
+    display:flex;
+
+    flex-direction:column;
+
+    align-items:center;
+
+    justify-content:center;
+
+    gap:12px;
+
+    min-height:120px;
+
+}
+
+.tool-card:hover{
+
+    background:#2563EB;
+
+    color:white;
+
+    transform:translateY(-5px);
+
+    box-shadow:0 15px 30px rgba(37,99,235,.25);
+
+}
+
+.tool-card i{
+
+    font-size:34px;
+
+}
+
+.tool-card span{
+
+    font-size:15px;
+
+    font-weight:600;
+
+    text-align:center;
+
+}
+
+
+/* ==========================================
+   EMPTY STATE
+========================================== */
+
+.empty-state{
+
+    display:flex;
+
+    flex-direction:column;
+
+    justify-content:center;
+
+    align-items:center;
+
+    height:100%;
+
+    min-height:350px;
+
+    text-align:center;
+
+    color:#94A3B8;
+
+}
+
+.empty-state i{
+
+    font-size:70px;
+
+    margin-bottom:20px;
+
+    color:#CBD5E1;
+
+}
+
+.empty-state h4{
+
+    color:#334155;
+
+    margin-bottom:10px;
+
+    font-weight:600;
+
+}
+
+.empty-state p{
+
+    max-width:320px;
+
+    line-height:1.6;
+
+}
+
+
+/* ==========================================
+   PREVIEW CARD
+========================================== */
+
+.preview-area pre{
+
+    white-space:pre-wrap;
+
+    word-break:break-word;
+
+    font-size:14px;
+
+    line-height:1.7;
+
+    color:#334155;
+
+}
+
+.preview-area .card{
+
+    border:none;
+
+    box-shadow:none;
+
+}
+
+.preview-area .card-header{
+
+    background:#F8FAFC;
+
+    border-bottom:1px solid #E2E8F0;
+
+    font-weight:600;
+
+}
+
+
+/* ==========================================
+   AI RESULT CARD
+========================================== */
+
+.result-area .card{
+
+    border:none;
+
+    border-radius:16px;
+
+    overflow:hidden;
+
+    box-shadow:0 8px 25px rgba(0,0,0,.08);
+
+}
+
+.result-area .card-header{
+
+    background:#16A34A;
+
+    color:white;
+
+    font-weight:600;
+
+}
+
+.result-area .card-body{
+
+    background:white;
+
+    line-height:1.8;
+
+    color:#334155;
+
+}
+/* ==========================================
+   TEXTAREA
+========================================== */
+
+textarea.form-control{
+
+    resize:none;
+
+    min-height:140px;
+
+    line-height:1.7;
+
+}
+
+
+/* ==========================================
+   BUTTON SPACING
+========================================== */
+
+.workspace-card .btn{
+
+    margin-top:10px;
+
+}
+
+
+/* ==========================================
+   CUSTOM SCROLLBAR
+========================================== */
+
+.preview-area::-webkit-scrollbar,
+.result-area::-webkit-scrollbar{
+
+    width:8px;
+
+}
+
+.preview-area::-webkit-scrollbar-track,
+.result-area::-webkit-scrollbar-track{
+
+    background:#F1F5F9;
+
+    border-radius:10px;
+
+}
+
+.preview-area::-webkit-scrollbar-thumb,
+.result-area::-webkit-scrollbar-thumb{
+
+    background:#94A3B8;
+
+    border-radius:10px;
+
+}
+
+.preview-area::-webkit-scrollbar-thumb:hover,
+.result-area::-webkit-scrollbar-thumb:hover{
+
+    background:#64748B;
+
+}
+
+
+/* ==========================================
+   CARD HOVER EFFECT
+========================================== */
+
+.workspace-card{
+
+    transition:all .3s ease;
+
+}
+
+.workspace-card:hover{
+
+    transform:translateY(-4px);
+
+    box-shadow:0 16px 40px rgba(15,23,42,.12);
+
+}
+
+
+/* ==========================================
+   FILE INPUT
+========================================== */
+
+input[type="file"]{
+
+    cursor:pointer;
+
+}
+
+
+/* ==========================================
+   RESPONSIVE DESIGN
+========================================== */
+
+@media (max-width:1200px){
+
+.workspace-row{
+
+    grid-template-columns:1fr;
+
+}
+
+}
+
+
+@media (max-width:992px){
+
+.sidebar{
+
+    width:220px;
+
+}
+
+.main{
+
+    margin-left:220px;
+
+    padding:25px;
+
+}
+
+}
+
+
+@media (max-width:768px){
+
+.sidebar{
+
+    position:relative;
+
+    width:100%;
+
+    height:auto;
+
+}
+
+.main{
+
+    margin-left:0;
+
+}
+
+.topbar{
+
+    flex-direction:column;
+
+    align-items:flex-start;
+
+    gap:15px;
+
+}
+
+.analysis-grid{
+
+    grid-template-columns:1fr;
+
+}
+
+}
+
+
+@media (max-width:576px){
+
+.main{
+
+    padding:15px;
+
+}
+
+.workspace-card .card-body{
+
+    padding:16px;
+
+}
+
+.tool-card{
+
+    min-height:100px;
+
+    padding:18px;
+
+}
+
+.tool-card i{
+
+    font-size:28px;
+
+}
+
+.tool-card span{
+
+    font-size:14px;
+
+}
+
+.profile{
+
+    width:100%;
+
+    text-align:center;
+
+}
+
+}
+
+
+/* ==========================================
+   END OF FILE
+========================================== */

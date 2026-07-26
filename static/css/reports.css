@@ -1,0 +1,313 @@
+/* ==========================================
+   GOOGLE FONT
+========================================== */
+
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Poppins:wght@500;600;700&display=swap');
+
+/* ==========================================
+   GLOBAL
+========================================== */
+
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+}
+
+body{
+    font-family:'Inter',sans-serif;
+    background:#F8FAFC;
+    color:#1E293B;
+}
+
+/* ==========================================
+   APP LAYOUT
+========================================== */
+
+.app-container{
+    display:flex;
+    min-height:100vh;
+}
+
+/* ==========================================
+   SIDEBAR
+========================================== */
+
+.sidebar{
+    width:260px;
+    background:#0F172A;
+    color:white;
+    padding:30px 20px;
+    position:fixed;
+    left:0;
+    top:0;
+    bottom:0;
+    overflow:auto;
+}
+
+.logo{
+    font-size:26px;
+    font-weight:700;
+    text-align:center;
+    margin-bottom:40px;
+    font-family:'Poppins',sans-serif;
+}
+
+.sidebar ul{
+    list-style:none;
+    padding:0;
+}
+
+.sidebar li{
+    margin-bottom:12px;
+}
+
+.sidebar a{
+    display:flex;
+    align-items:center;
+    gap:12px;
+    text-decoration:none;
+    color:#CBD5E1;
+    padding:14px 18px;
+    border-radius:12px;
+    transition:.3s;
+    font-size:15px;
+}
+
+.sidebar a:hover{
+    background:#1E293B;
+    color:white;
+}
+
+.sidebar .active a{
+    background:#2563EB;
+    color:white;
+}
+
+/* ==========================================
+   MAIN
+========================================== */
+
+.main{
+    flex:1;
+    margin-left:260px;
+    padding:35px;
+}
+
+/* ==========================================
+   TOPBAR
+========================================== */
+
+.topbar{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    margin-bottom:30px;
+}
+
+.topbar h2{
+    font-weight:700;
+    margin-bottom:5px;
+}
+
+.topbar p{
+    color:#64748B;
+}
+
+.profile{
+    background:white;
+    padding:12px 22px;
+    border-radius:12px;
+    box-shadow:0 5px 18px rgba(0,0,0,.06);
+    font-weight:600;
+}
+
+/* ==========================================
+   CARDS
+========================================== */
+
+.workspace-card{
+    border:none;
+    border-radius:18px;
+    box-shadow:0 10px 30px rgba(15,23,42,.08);
+    margin-bottom:25px;
+}
+
+/* ==========================================
+   WORKSPACE
+========================================== */
+
+.workspace{
+    display:grid;
+    grid-template-columns:320px 1fr;
+    gap:25px;
+}
+
+/* ==========================================
+   BUTTONS
+========================================== */
+
+.btn-primary{
+    background:#2563EB;
+    border:none;
+}
+
+.btn-primary:hover{
+    background:#1D4ED8;
+}
+
+.btn-success{
+    background:#10B981;
+    border:none;
+}
+
+.btn-success:hover{
+    background:#059669;
+}
+
+.btn-danger{
+    border:none;
+}
+
+/* ==========================================
+   HISTORY
+========================================== */
+
+#history{
+    max-height:420px;
+    overflow:auto;
+}
+
+.history-item{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    padding:12px;
+    border-radius:10px;
+    margin-bottom:10px;
+    background:#F8FAFC;
+    transition:.25s;
+}
+
+.history-item:hover{
+    background:#E2E8F0;
+    cursor:pointer;
+}
+
+/* ==========================================
+   REPORT
+========================================== */
+
+.report-area{
+    min-height:650px;
+    max-height:650px;
+    overflow:auto;
+    padding:30px;
+    line-height:1.8;
+}
+
+.report-area h1,
+.report-area h2,
+.report-area h3{
+    margin-top:20px;
+    margin-bottom:15px;
+}
+
+.report-area p{
+    color:#334155;
+}
+
+/* ==========================================
+   EMPTY STATE
+========================================== */
+
+.empty-state{
+    height:550px;
+    display:flex;
+    flex-direction:column;
+    justify-content:center;
+    align-items:center;
+    color:#94A3B8;
+    text-align:center;
+}
+
+.empty-state i{
+    font-size:80px;
+    margin-bottom:20px;
+}
+
+.empty-state h4{
+    color:#334155;
+}
+
+/* ==========================================
+   INPUT
+========================================== */
+
+.form-control{
+    border-radius:12px;
+    border:1px solid #CBD5E1;
+    padding:12px;
+}
+
+.form-control:focus{
+    box-shadow:none;
+    border-color:#2563EB;
+}
+
+/* ==========================================
+   SCROLLBAR
+========================================== */
+
+::-webkit-scrollbar{
+    width:8px;
+}
+
+::-webkit-scrollbar-thumb{
+    background:#CBD5E1;
+    border-radius:20px;
+}
+
+/* ==========================================
+   RESPONSIVE
+========================================== */
+
+@media(max-width:992px){
+
+    .workspace{
+        grid-template-columns:1fr;
+    }
+
+}
+
+@media(max-width:768px){
+
+    .sidebar{
+        width:80px;
+    }
+
+    .sidebar .logo{
+        font-size:18px;
+    }
+
+    .sidebar a{
+        justify-content:center;
+        font-size:0;
+    }
+
+    .sidebar a i{
+        font-size:20px;
+    }
+
+    .main{
+        margin-left:80px;
+        padding:20px;
+    }
+
+    .topbar{
+        flex-direction:column;
+        align-items:flex-start;
+        gap:15px;
+    }
+
+}
