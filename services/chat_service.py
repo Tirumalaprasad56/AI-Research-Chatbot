@@ -1,9 +1,7 @@
 import os
 
 from dotenv import load_dotenv
-
 from groq import Groq
-
 
 
 # =====================================
@@ -12,57 +10,33 @@ from groq import Groq
 
 load_dotenv()
 
-
-
-API_KEY = os.getenv(
-    "GROQ_API_KEY"
-)
-
-
+API_KEY = os.getenv("GROQ_API_KEY")
 
 if not API_KEY:
-
     raise ValueError(
         "GROQ_API_KEY missing in .env file"
     )
-
-
-
 
 
 # =====================================
 # GROQ CLIENT
 # =====================================
 
-
 client = Groq(
-
     api_key=API_KEY
-
 )
-
-
-
 
 
 # =====================================
 # AI CHAT FUNCTION
 # =====================================
 
-
 def ask_ai(message, context=None):
 
-
-    if not message or message.strip()=="":
-
-
+    if not message or message.strip() == "":
         return "Please enter a valid question."
 
-
-
-
     system_prompt = """
-
 You are an advanced AI Research Assistant.
 
 Your responsibilities:
@@ -86,124 +60,77 @@ Your responsibilities:
 - If the question is unrelated,
   politely guide the user back
   to research topics.
+    """
 
-"""
-
-
-
-    messages=[
-
+    messages = [
 
         {
-
-            "role":"system",
-
-            "content":system_prompt
-
+            "role": "system",
+            "content": system_prompt
         },
 
-
         {
-
-            "role":"user",
-
-            "content":message
-
+            "role": "user",
+            "content": message
         }
 
-
     ]
-
-
 
     # Add previous context if available
 
     if context:
 
-
         messages.insert(
-
             1,
-
             {
-
-                "role":"assistant",
-
-                "content":context
-
+                "role": "assistant",
+                "content": context
             }
-
         )
-
-
-
 
     try:
 
-
         response = client.chat.completions.create(
 
-
-            model=
-            "llama-3.3-70b-versatile",
-
-
+            model="openai/gpt-oss-120b",
 
             messages=messages,
 
-
-
             temperature=0.4,
-
-
 
             max_tokens=2000
 
-
         )
-
-
 
         answer = (
-
             response
-
             .choices[0]
-
             .message
-
             .content
-
         )
-
-
 
         return answer
 
-
-
-
-
     except Exception as e:
-
-
 
         print(
             "Groq Chat Error:",
             str(e)
         )
 
-
-
         return f"""
-
 Unable to generate response.
 
 Error:
 
 {str(e)}
-
 """
+
+
+# =====================================
+# DOCUMENT QUESTION ANSWERING
+# =====================================
+
 def ask_document(document, question):
 
     prompt = f"""
@@ -226,7 +153,7 @@ Question:
 
     response = client.chat.completions.create(
 
-        model="llama-3.3-70b-versatile",
+        model="openai/gpt-oss-120b",
 
         messages=[
             {
@@ -236,6 +163,7 @@ Question:
         ],
 
         temperature=0.3,
+
         max_tokens=1200
     )
 
