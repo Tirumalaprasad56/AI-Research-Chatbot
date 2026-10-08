@@ -214,7 +214,7 @@ Rules:
 
 
             model=
-            "llama-3.3-70b-versatile",
+            "openai/gpt-oss-120b",
 
 
 
@@ -253,7 +253,7 @@ Rules:
             temperature=0.4,
 
 
-            max_tokens=4000
+            max_tokens=2000
 
         )
 
