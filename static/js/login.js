@@ -1,210 +1,170 @@
-// ======================================
-// SHOW / HIDE PASSWORD
-// ======================================
 
-const password = document.getElementById("password");
-const togglePassword = document.getElementById("togglePassword");
+import {
+    signInWithEmailAndPassword,
+    sendEmailVerification,
+    signOut
+} from "https://www.gstatic.com/firebasejs/11.10.0/firebase-auth.js";
 
-if (togglePassword && password) {
+import { auth } from "./firebase-config.js";
 
-    togglePassword.onclick = () => {
-
-        if (password.type === "password") {
-
-            password.type = "text";
-
-            togglePassword.innerHTML =
-                '<i class="bi bi-eye-slash"></i>';
-
-        } else {
-
-            password.type = "password";
-
-            togglePassword.innerHTML =
-                '<i class="bi bi-eye"></i>';
-
-        }
-
-    };
-
-}
-
-// ======================================
-// SHOW / HIDE CONFIRM PASSWORD
-// ======================================
-
-const confirmPassword =
-    document.getElementById("confirmPassword");
-
-const toggleConfirmPassword =
-    document.getElementById("toggleConfirmPassword");
-
-if (toggleConfirmPassword && confirmPassword) {
-
-    toggleConfirmPassword.onclick = () => {
-
-        if (confirmPassword.type === "password") {
-
-            confirmPassword.type = "text";
-
-            toggleConfirmPassword.innerHTML =
-                '<i class="bi bi-eye-slash"></i>';
-
-        } else {
-
-            confirmPassword.type = "password";
-
-            toggleConfirmPassword.innerHTML =
-                '<i class="bi bi-eye"></i>';
-
-        }
-
-    };
-
-}
-
-// ======================================
-// PASSWORD STRENGTH
-// ======================================
-
-const strength =
-    document.getElementById("passwordStrength");
-
-if (password && strength) {
-
-    password.addEventListener("keyup", () => {
-
-        let value = password.value;
-
-        let score = 0;
-
-        if (value.length >= 8) score++;
-
-        if (/[A-Z]/.test(value)) score++;
-
-        if (/[a-z]/.test(value)) score++;
-
-        if (/[0-9]/.test(value)) score++;
-
-        if (/[^A-Za-z0-9]/.test(value)) score++;
-
-        if (score <= 2) {
-
-            strength.innerHTML =
-                "Weak Password";
-
-            strength.style.color = "#dc2626";
-
-        }
-
-        else if (score <= 4) {
-
-            strength.innerHTML =
-                "Medium Password";
-
-            strength.style.color = "#f59e0b";
-
-        }
-
-        else {
-
-            strength.innerHTML =
-                "Strong Password";
-
-            strength.style.color = "#16a34a";
-
-        }
-
-    });
-
-}
-
-// ======================================
-// PASSWORD MATCH
-// ======================================
-
-if (confirmPassword && password) {
-
-    confirmPassword.addEventListener("keyup", () => {
-
-        if (confirmPassword.value === "")
-            return;
-
-        if (password.value === confirmPassword.value) {
-
-            confirmPassword.style.border =
-                "2px solid #22c55e";
-
-        }
-
-        else {
-
-            confirmPassword.style.border =
-                "2px solid #ef4444";
-
-        }
-
-    });
-
-}
-
-// ======================================
-// LOGIN BUTTON LOADING
-// ======================================
-
+const loginForm = document.getElementById("loginForm");
+const emailInput = document.getElementById("email");
+const passwordInput = document.getElementById("password");
 const loginBtn = document.getElementById("loginBtn");
+const authMessage = document.getElementById("authMessage");
 
-if (loginBtn) {
+function showMessage(message, type = "info") {
+    if (!authMessage) {
+        alert(message);
+        return;
+    }
 
-    loginBtn.addEventListener("click", function () {
-
-        console.log("Login button clicked");
-
-        setTimeout(() => {
-
-            loginBtn.disabled = true;
-
-            loginBtn.innerHTML = `
-                <span class="spinner-border spinner-border-sm"></span>
-                Signing In...
-            `;
-
-        }, 100);
-
-    });
-
+    authMessage.textContent = message;
+    authMessage.className = `alert alert-${type}`;
+    authMessage.hidden = false;
 }
 
-// ======================================
-// REGISTER FORM
-// ======================================
+function setLoading(loading) {
+    if (!loginBtn) return;
 
-const registerForm = document.getElementById("registerForm");
-const registerBtn = document.getElementById("registerBtn");
+    if (loading) {
+        loginBtn.dataset.originalText = loginBtn.innerHTML;
+        loginBtn.disabled = true;
+        loginBtn.innerHTML =
+            '<span class="spinner-border spinner-border-sm"></span> Signing In...';
+    } else {
+        loginBtn.disabled = false;
 
-if (registerForm) {
+        if (loginBtn.dataset.originalText) {
+            loginBtn.innerHTML = loginBtn.dataset.originalText;
+            delete loginBtn.dataset.originalText;
+        }
+    }
+}
 
-    registerForm.addEventListener("submit", function(e) {
+function friendlyError(error) {
+    const messages = {
+        "auth/invalid-credential": "Incorrect email or password.",
+        "auth/invalid-email": "Enter a valid email address.",
+        "auth/too-many-requests":
+            "Too many attempts. Please try again later.",
+        "auth/network-request-failed":
+            "Check your internet connection.",
+        "auth/user-disabled": "This account has been disabled.",
+        "auth/operation-not-allowed":
+            "Email/password authentication is not enabled in Firebase."
+    };
 
-        if (
-            confirmPassword &&
-            password &&
-            password.value !== confirmPassword.value
-        ) {
+    return messages[error.code] || "Login failed. Please try again.";
+}
 
-            e.preventDefault();
+if (loginForm) {
+    loginForm.addEventListener("submit", async (event) => {
+        event.preventDefault();
 
-            alert("Passwords do not match.");
+        if (authMessage) {
+            authMessage.hidden = true;
+        }
 
+        const email = emailInput?.value.trim();
+        const password = passwordInput?.value;
+
+        if (!email || !password) {
+            showMessage(
+                "Enter your email and password.",
+                "danger"
+            );
             return;
         }
 
-        registerBtn.disabled = true;
+        setLoading(true);
 
-        registerBtn.innerHTML = `
-            <span class="spinner-border spinner-border-sm"></span>
-            Creating Account...
-        `;
+        try {
+            const credential = await signInWithEmailAndPassword(
+                auth,
+                email,
+                password
+            );
+
+            const user = credential.user;
+
+            await user.reload();
+
+            if (!user.emailVerified) {
+                try {
+                    await sendEmailVerification(user);
+
+                    showMessage(
+                        "Your email is not verified. A verification email " +
+                        "has been sent. Verify your email, then log in again.",
+                        "warning"
+                    );
+                } catch (emailError) {
+                    console.error(
+                        "Verification email error:",
+                        emailError
+                    );
+
+                    showMessage(
+                        emailError.code === "auth/too-many-requests"
+                            ? "Too many email requests. Please try again later."
+                            : "Your email is not verified. Check your inbox " +
+                              "and try again later.",
+                        "warning"
+                    );
+                }
+
+                await signOut(auth);
+                return;
+            }
+
+            const idToken = await user.getIdToken(true);
+
+            const response = await fetch("/auth/firebase-login", {
+                method: "POST",
+                credentials: "same-origin",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({ idToken })
+            });
+
+            const result = await response.json().catch(() => ({}));
+
+            if (!response.ok) {
+                throw new Error(
+                    result.message ||
+                    "The server could not create your session."
+                );
+            }
+
+            const redirectUrl = result.redirect_url || "/dashboard";
+
+            if (
+                !redirectUrl.startsWith("/") ||
+                redirectUrl.startsWith("//")
+            ) {
+                throw new Error("Invalid redirect URL.");
+            }
+
+            window.location.assign(redirectUrl);
+
+        } catch (error) {
+            console.error("Login error:", error);
+
+            if (auth.currentUser) {
+                await signOut(auth).catch(() => {});
+            }
+
+            showMessage(
+                error.message && !error.code
+                    ? error.message
+                    : friendlyError(error),
+                "danger"
+            );
+
+        } finally {
+            setLoading(false);
+        }
     });
-
 }

@@ -1,170 +1,66 @@
-import os
-
-from dotenv import load_dotenv
-from groq import Groq
-
-
-# =====================================
-# LOAD ENVIRONMENT VARIABLES
-# =====================================
-
-load_dotenv()
-
-API_KEY = os.getenv("GROQ_API_KEY")
-
-if not API_KEY:
-    raise ValueError(
-        "GROQ_API_KEY missing in .env file"
-    )
-
-
-# =====================================
-# GROQ CLIENT
-# =====================================
-
-client = Groq(
-    api_key=API_KEY
+from services.groq_service import (
+    execute_groq_completion,
+    ask_document_ai
 )
 
 
 # =====================================
-# AI CHAT FUNCTION
+# AI CHAT FUNCTION WITH HISTORY SUPPORT
 # =====================================
 
-def ask_ai(message, context=None):
+def ask_ai(message, context=None, history=None):
+    """Conversational AI research assistant with context and thread history."""
+    if not message or not message.strip():
+        return "Please enter a valid research question."
 
-    if not message or message.strip() == "":
-        return "Please enter a valid question."
+    system_prompt = """You are an advanced AI Research Companion and Academic Copilot.
 
-    system_prompt = """
-You are an advanced AI Research Assistant.
+Your Core Capabilities:
+- Answer cutting-edge research, technology, academic, and project questions with depth and clarity.
+- Structure your answers rigorously: use clear Markdown headings, bullet points, numbered lists, math notation, and code snippets where appropriate.
+- Help students, researchers, and engineers with:
+  * Literature surveys & SOTA summaries
+  * Research paper analysis & comparative studies
+  * Artificial Intelligence, Machine Learning & Data Science algorithms
+  * Project architecture, systems design, and tech stack choices
+  * Scientific methodology, hypothesis validation, and experimental setup
+  * Technical documentation and thesis structuring
 
-Your responsibilities:
-
-- Answer only research, technology,
-  academic and project-related questions.
-
-- Explain concepts clearly.
-
-- Provide structured answers
-  using headings and bullet points.
-
-- Help with:
-    * Literature surveys
-    * Research papers
-    * AI/ML concepts
-    * Project ideas
-    * Methodologies
-    * Technical documentation
-
-- If the question is unrelated,
-  politely guide the user back
-  to research topics.
-    """
-
-    messages = [
-
-        {
-            "role": "system",
-            "content": system_prompt
-        },
-
-        {
-            "role": "user",
-            "content": message
-        }
-
-    ]
-
-    # Add previous context if available
-
-    if context:
-
-        messages.insert(
-            1,
-            {
-                "role": "assistant",
-                "content": context
-            }
-        )
-
-    try:
-
-        response = client.chat.completions.create(
-
-            model="openai/gpt-oss-120b",
-
-            messages=messages,
-
-            temperature=0.4,
-
-            max_tokens=2000
-
-        )
-
-        answer = (
-            response
-            .choices[0]
-            .message
-            .content
-        )
-
-        return answer
-
-    except Exception as e:
-
-        print(
-            "Groq Chat Error:",
-            str(e)
-        )
-
-        return f"""
-Unable to generate response.
-
-Error:
-
-{str(e)}
+Style Guidelines:
+- Authoritative, precise, helpful, and academically grounded.
+- If a query touches non-research topics, provide a polite, concise response and seamlessly redirect the conversation toward related scientific or technological concepts.
 """
 
+    messages = [{"role": "system", "content": system_prompt}]
+
+    # Append past conversation history if provided
+    if history and isinstance(history, list):
+        for msg in history[-10:]:  # Keep recent 10 turns to conserve context window
+            role = msg.get("role")
+            content = msg.get("content")
+            if role in ("user", "assistant") and content:
+                messages.append({"role": role, "content": content})
+
+    # Add single legacy context if present
+    if context and not history:
+        messages.append({"role": "assistant", "content": str(context)})
+
+    # Append current user prompt
+    messages.append({"role": "user", "content": message.strip()})
+
+    try:
+        return execute_groq_completion(messages, temperature=0.35, max_tokens=2500)
+    except Exception as e:
+        return f"Unable to generate response. Error: {str(e)}"
+
 
 # =====================================
-# DOCUMENT QUESTION ANSWERING
+# DOCUMENT QUESTION ANSWERING ALIAS
 # =====================================
 
 def ask_document(document, question):
-
-    prompt = f"""
-You are an expert research assistant.
-
-Answer ONLY using the uploaded document.
-
-If the answer is not in the document, say:
-
-'I couldn't find that information in the uploaded document.'
-
-Document:
-
-{document}
-
-Question:
-
-{question}
-"""
-
-    response = client.chat.completions.create(
-
-        model="openai/gpt-oss-120b",
-
-        messages=[
-            {
-                "role": "user",
-                "content": prompt
-            }
-        ],
-
-        temperature=0.3,
-
-        max_tokens=1200
-    )
-
-    return response.choices[0].message.content
+    """Answer question grounded in document content."""
+    try:
+        return ask_document_ai(document, question)
+    except Exception as e:
+        return f"Document analysis error: {str(e)}"

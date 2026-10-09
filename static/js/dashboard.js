@@ -1,197 +1,80 @@
-console.log("Dashboard Loaded");// =====================================
-// DASHBOARD.JS
-// =====================================
+// ==========================================================================
+// DASHBOARD LOGIC (2026 PRO EDITION)
+// ==========================================================================
 
 document.addEventListener("DOMContentLoaded", () => {
-
-    console.log("Dashboard Loaded");
-
-    loadDashboardStats();
-
-    loadRecentActivity();
-
-    setupDashboardCards();
-
+    fetchStats();
+    fetchRecentReports();
 });
 
-
-// =====================================
-// LOAD DASHBOARD STATS
-// =====================================
-
-async function loadDashboardStats() {
-
+async function fetchStats() {
     try {
+        const res = await fetch("/stats");
+        if (!res.ok) return;
+        const data = await res.json();
 
-        const response = await fetch("/stats");
-
-        const stats = await response.json();
-
-        const totalReports = document.getElementById("totalReports");
-        const todayReports = document.getElementById("todayReports");
-        const favoriteReports = document.getElementById("favoriteReports");
-
-        if (totalReports)
-            totalReports.innerHTML = stats.total;
-
-        if (todayReports)
-            todayReports.innerHTML = stats.today;
-
-        if (favoriteReports)
-            favoriteReports.innerHTML = stats.favorites;
-
+        document.getElementById("statTotalReports").innerText = data.total ?? 0;
+        document.getElementById("statTodayReports").innerText = data.today ?? 0;
+        document.getElementById("statFavorites").innerText = data.favorites ?? 0;
+        document.getElementById("statDocuments").innerText = data.documents ?? 0;
+    } catch (e) {
+        console.error("Error loading stats:", e);
     }
-
-    catch (err) {
-
-        console.log(err);
-
-    }
-
 }
 
-
-// =====================================
-// LOAD RECENT ACTIVITY
-// =====================================
-
-async function loadRecentActivity() {
-
-    const activity = document.getElementById("recentActivity");
-
-    if (!activity)
-        return;
+async function fetchRecentReports() {
+    const container = document.getElementById("recentReportsContainer");
+    if (!container) return;
 
     try {
+        const res = await fetch("/history");
+        if (!res.ok) throw new Error("Failed to load history");
+        const reports = await res.json();
 
-        const response = await fetch("/history");
-
-        const reports = await response.json();
-
-        activity.innerHTML = "";
-
-        if (reports.length === 0) {
-
-            activity.innerHTML = `
-                <div class="text-center text-secondary">
-                    No recent activity
+        if (!reports || reports.length === 0) {
+            container.innerHTML = `
+                <div class="empty-state-pro py-4">
+                    <i class="bi bi-file-earmark-text"></i>
+                    <h4>No reports generated yet</h4>
+                    <p>Start your first literature survey by entering a research topic.</p>
+                    <a href="/reports" class="btn-pro btn-pro-primary btn-sm mt-3">Create First Report</a>
                 </div>
             `;
-
             return;
-
         }
 
-        reports.slice(0, 5).forEach(report => {
+        // Render top 5 reports
+        const topReports = reports.slice(0, 5);
+        let html = '<div class="d-flex flex-column gap-2">';
 
-            activity.innerHTML += `
-                <div class="activity-item">
-
-                    <i class="bi bi-file-earmark-text"></i>
-
-                    <span>
-
-                        ${report.topic}
-
-                    </span>
-
+        topReports.forEach(r => {
+            const dateStr = r.created_at ? new Date(r.created_at).toLocaleDateString(undefined, {month: 'short', day: 'numeric', year: 'numeric'}) : '';
+            html += `
+                <div class="history-item-pro" onclick="window.location.href='/reports?id=${r.id}'">
+                    <div class="d-flex align-items-center gap-2 overflow-hidden">
+                        <i class="bi ${r.favorite ? 'bi-star-fill text-warning' : 'bi-file-earmark-text text-primary'}"></i>
+                        <span class="history-text" title="${r.topic}">${r.topic}</span>
+                    </div>
+                    <div class="d-flex align-items-center gap-3">
+                        <span class="text-muted small">${dateStr}</span>
+                        <i class="bi bi-chevron-right text-muted small"></i>
+                    </div>
                 </div>
             `;
-
         });
 
+        html += '</div>';
+        container.innerHTML = html;
+    } catch (e) {
+        console.error("Error loading recent reports:", e);
+        container.innerHTML = `
+            <div class="alert alert-danger py-2 small mb-0">
+                Failed to load recent activity.
+            </div>
+        `;
     }
-
-    catch (err) {
-
-        console.log(err);
-
-    }
-
 }
 
-
-// =====================================
-// DASHBOARD CARD EVENTS
-// =====================================
-
-function setupDashboardCards() {
-
-    const cards = document.querySelectorAll(".card-box");
-
-    cards.forEach(card => {
-
-        card.addEventListener("mouseenter", () => {
-
-            card.style.transform = "translateY(-8px)";
-
-        });
-
-        card.addEventListener("mouseleave", () => {
-
-            card.style.transform = "translateY(0px)";
-
-        });
-
-    });
-
+function launchTopic(topicName) {
+    window.location.href = `/reports?topic=${encodeURIComponent(topicName)}`;
 }
-
-
-// =====================================
-// QUICK NAVIGATION
-// =====================================
-
-function openReports() {
-
-    window.location.href = "/reports";
-
-}
-
-function openPresentation() {
-
-    window.location.href = "/presentation";
-
-}
-
-function openAnalyzer() {
-
-    window.location.href = "/analyzer";
-
-}
-
-function openPaper() {
-
-  window.location.href = "/documents_page";
-
-}
-
-function openChat() {
-
-    window.location.href = "/chat";
-
-}
-
-
-// =====================================
-// REFRESH DASHBOARD
-// =====================================
-
-function refreshDashboard() {
-
-    loadDashboardStats();
-
-    loadRecentActivity();
-
-}
-
-
-// =====================================
-// AUTO REFRESH EVERY 60 SECONDS
-// =====================================
-
-setInterval(() => {
-
-    loadDashboardStats();
-
-}, 60000);

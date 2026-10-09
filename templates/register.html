@@ -1,272 +1,399 @@
 <!DOCTYPE html>
-<html lang="en">
-
+<html lang="en" data-theme="dark">
 <head>
-
     <meta charset="UTF-8">
-
-    <meta name="viewport"
-          content="width=device-width, initial-scale=1.0">
-
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Create Account | AI Research Assistant</title>
-
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
-          rel="stylesheet">
-
-    <link rel="stylesheet"
-          href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
-
-    <link rel="stylesheet"
-          href="{{ url_for('static', filename='css/login.css') }}">
-
+    
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/dashboard-pro.css') }}">
+    <style>
+        .auth-container {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: radial-gradient(circle at 10% 20%, rgba(30, 58, 138, 0.4) 0%, rgba(10, 14, 23, 0.95) 90%);
+            padding: 24px;
+        }
+        .auth-card {
+            width: 100%;
+            max-width: 960px;
+            background: var(--bg-surface);
+            border: 1px solid var(--border-subtle);
+            border-radius: var(--radius-xl);
+            overflow: hidden;
+            box-shadow: var(--shadow-lg), var(--shadow-glow);
+        }
+        .auth-brand-side {
+            background: linear-gradient(135deg, rgba(30, 58, 138, 0.5) 0%, rgba(15, 23, 42, 0.8) 100%);
+            padding: 48px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+        .auth-form-side {
+            padding: 48px;
+            background: var(--bg-card);
+        }
+        .btn-google {
+            background: #ffffff;
+            color: #1f2937;
+            font-weight: 600;
+            border: 1px solid #e5e7eb;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+            transition: var(--transition);
+        }
+        .btn-google:hover {
+            background: #f9fafb;
+            color: #111827;
+            box-shadow: 0 4px 12px rgba(255, 255, 255, 0.15);
+            transform: translateY(-1px);
+        }
+        .auth-divider {
+            display: flex;
+            align-items: center;
+            text-align: center;
+            margin: 20px 0;
+            color: var(--text-muted);
+            font-size: 12px;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+        .auth-divider::before,
+        .auth-divider::after {
+            content: '';
+            flex: 1;
+            border-bottom: 1px solid var(--border-subtle);
+        }
+        .auth-divider span {
+            padding: 0 12px;
+        }
+    </style>
 </head>
-
 <body>
 
-<div class="container-fluid login-page">
-
-    <div class="row vh-100">
-
-        <!-- LEFT PANEL -->
-
-        <div class="col-lg-6 left-panel d-none d-lg-flex">
-
-            <div class="left-content">
-
-                <div class="logo-circle">
-
-                    🤖
-
+<div class="auth-container">
+    <div class="auth-card row g-0">
+        <!-- Left Brand Side -->
+        <div class="col-lg-6 auth-brand-side d-none d-lg-flex">
+            <div>
+                <div class="d-flex align-items-center gap-3 mb-4">
+                    <div class="brand-icon">
+                        <i class="bi bi-cpu-fill"></i>
+                    </div>
+                    <div>
+                        <h3 class="text-white mb-0 fw-bold">AI Research</h3>
+                        <span class="brand-badge">Firebase Authenticated</span>
+                    </div>
                 </div>
 
-                <h1>
-
-                    Join AI Research Assistant
-
-                </h1>
-
-                <p>
-
-                    Create your account and unlock intelligent research,
-                    presentations, document analysis and AI-powered learning.
-
-                </p>
-
-                <div class="feature-list">
-
-                    <div class="feature">
-
-                        <i class="bi bi-file-earmark-text"></i>
-
-                        Unlimited AI Research Reports
-
-                    </div>
-
-                    <div class="feature">
-
-                        <i class="bi bi-file-earmark-ppt"></i>
-
-                        Presentation Generator
-
-                    </div>
-
-                    <div class="feature">
-
-                        <i class="bi bi-search"></i>
-
-                        Research Paper Analysis
-
-                    </div>
-
-                    <div class="feature">
-
-                        <i class="bi bi-journal-check"></i>
-
-                        Document AI Assistant
-
-                    </div>
-
-                    <div class="feature">
-
-                        <i class="bi bi-stars"></i>
-
-                        Smart AI Workspace
-
-                    </div>
-
-                </div>
-
-            </div>
-
-        </div>
-
-        <!-- RIGHT PANEL -->
-
-        <div class="col-lg-6 col-12 right-panel">
-
-            <div class="login-card">
-
-                <h2>
-
-                    Create Account
-
+                <h2 class="text-white fw-bold mb-3" style="letter-spacing: -0.02em;">
+                    Join the Leading AI Academic Platform
                 </h2>
-
-                <p>
-
-                    Register to continue
-
+                <p class="text-secondary mb-4">
+                    Create your researcher profile with Firebase authentication to unlock high-speed Groq AI research tools, slide generation, and document analysis.
                 </p>
 
-                {% if error %}
-
-                <div class="alert alert-danger">
-
-                    {{ error }}
-
+                <div class="d-flex flex-column gap-3">
+                    <div class="d-flex align-items-center gap-3 text-light">
+                        <i class="bi bi-shield-check text-success fs-5"></i>
+                        <span>Firebase Cloud Identity & Cryptographic Security</span>
+                    </div>
+                    <div class="d-flex align-items-center gap-3 text-light">
+                        <i class="bi bi-stars text-primary fs-5"></i>
+                        <span>High-Speed Groq Inference (500+ tok/s)</span>
+                    </div>
+                    <div class="d-flex align-items-center gap-3 text-light">
+                        <i class="bi bi-download text-info fs-5"></i>
+                        <span>Export to PDF, Word (.docx), PPTX & Markdown</span>
+                    </div>
+                    <div class="d-flex align-items-center gap-3 text-light">
+                        <i class="bi bi-database-check text-warning fs-5"></i>
+                        <span>Persistent SQLite Database Synchronization</span>
+                    </div>
                 </div>
-
-                {% endif %}
-
-                
-                  <form
-    id="registerForm"
-    method="POST"
-    action="/register">
-
-                    <div class="mb-3">
-
-                        <label class="form-label">
-
-                            Username
-
-                        </label>
-
-                        <input
-                            type="text"
-                            class="form-control"
-                            name="username"
-                            placeholder="Enter username"
-                            required>
-
-                    </div>
-
-                    <div class="mb-3">
-
-                        <label class="form-label">
-
-                            Email
-
-                        </label>
-
-                        <input
-                            type="email"
-                            class="form-control"
-                            name="email"
-                            placeholder="Enter email"
-                            required>
-
-                    </div>
-
-                    <div class="mb-3">
-
-                        <label class="form-label">
-
-                            Password
-
-                        </label>
-
-                        <div class="password-box">
-
-                            <input
-                                type="password"
-                                id="password"
-                                class="form-control"
-                                name="password"
-                                placeholder="Create password"
-                                required>
-
-                            <button
-                                type="button"
-                                id="togglePassword"
-                                class="eye-btn">
-
-                                <i class="bi bi-eye"></i>
-
-                            </button>
-
-                        </div>
-
-                    </div>
-
-                    <div class="mb-3">
-
-                        <label class="form-label">
-
-                            Confirm Password
-
-                        </label>
-
-                        <div class="password-box">
-
-                            <input
-                                type="password"
-                                id="confirmPassword"
-                                class="form-control"
-                                placeholder="Confirm password"
-                                required>
-
-                            <button
-                                type="button"
-                                id="toggleConfirmPassword"
-                                class="eye-btn">
-
-                                <i class="bi bi-eye"></i>
-
-                            </button>
-
-                        </div>
-
-                    </div>
-
-                    <div
-                        id="passwordStrength"
-                        class="mb-3 text-primary fw-bold">
-
-                    </div>
-<button
-    id="registerBtn"
-    type="submit"
-    class="btn btn-primary w-100">
-
-    Create Account
-
-</button>
-                </form>
-
-                <hr>
-
-                <p class="text-center">
-
-                    Already have an account?
-
-                    <a href="/login">
-
-                        Login
-
-                    </a>
-
-                </p>
-
             </div>
 
+            <div class="pt-4 border-top border-secondary border-opacity-25 text-muted small">
+                Enterprise Cloud Security &bull; Powered by Firebase & Groq
+            </div>
         </div>
 
-    </div>
+        <!-- Right Register Form -->
+        <div class="col-lg-6 auth-form-side">
+            <div class="mb-4">
+                <h3 class="text-white fw-bold mb-1">Create Account</h3>
+                <p class="text-muted small">Register securely with Firebase</p>
+            </div>
 
+            <!-- Dynamic Alert Box -->
+            <div id="authAlert" class="alert py-2 px-3 small mb-3 d-none" role="alert"></div>
+
+            <!-- Google Sign-Up Button -->
+            <button type="button" class="btn btn-google w-100 py-2 mb-3 rounded-3" id="googleSignUpBtn">
+                <svg width="18" height="18" viewBox="0 0 24 24">
+                    <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
+                    <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
+                    <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.06H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.94l2.85-2.22.81-.63z"/>
+                    <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.06l3.66 2.84c.87-2.6 3.3-4.52 6.16-4.52z"/>
+                </svg>
+                <span>Sign up with Google</span>
+            </button>
+
+            <div class="auth-divider">
+                <span>or register with email</span>
+            </div>
+
+            <form id="emailRegisterForm">
+                <div class="mb-3">
+                    <label class="form-label text-light small fw-bold">Full Name / Username</label>
+                    <input type="text" id="regUsername" class="form-control-pro" placeholder="Dr. Alex Rivera" required autofocus>
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label text-light small fw-bold">Email Address</label>
+                    <input type="email" id="regEmail" class="form-control-pro" placeholder="alex@university.edu" required>
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label text-light small fw-bold">Create Password</label>
+                    <div class="position-relative">
+                        <input type="password" id="regPassword" class="form-control-pro pe-5" placeholder="Minimum 6 characters" required minlength="6">
+                        <button type="button" class="btn position-absolute top-50 end-0 translate-middle-y text-muted border-0" id="toggleRegPwdBtn" tabindex="-1">
+                            <i class="bi bi-eye"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <div class="mb-4">
+                    <label class="form-label text-light small fw-bold">Confirm Password</label>
+                    <input type="password" id="regConfirmPassword" class="form-control-pro" placeholder="Re-enter password" required minlength="6">
+                </div>
+
+                <button type="submit" class="btn-pro btn-pro-primary w-100 py-3 mb-3" id="registerSubmitBtn">
+                    <i class="bi bi-person-plus-fill"></i> Create Account with Firebase
+                </button>
+            </form>
+
+            <div class="text-center pt-3 border-top border-secondary border-opacity-25">
+                <span class="text-muted small">Already have an account?</span>
+                <a href="/login" class="text-primary text-decoration-none fw-bold small ms-1">Sign In</a>
+            </div>
+        </div>
+    </div>
 </div>
 
-<!-- <script src="{{ url_for('static', filename='js/login.js') }}"></script> -->
-</body>
+<!-- Firebase Authentication ES Module Logic -->
 
+<script type="module">
+    import {
+        auth,
+        googleProvider,
+        signInWithPopup,
+        createUserWithEmailAndPassword,
+        updateProfile,
+        sendEmailVerification,
+        signOut
+    } from "{{ url_for('static', filename='js/firebase-config.js') }}";
+
+    const alertBox = document.getElementById("authAlert");
+    const regForm = document.getElementById("emailRegisterForm");
+    const regBtn = document.getElementById("registerSubmitBtn");
+    const googleBtn = document.getElementById("googleSignUpBtn");
+    const togglePwd = document.getElementById("toggleRegPwdBtn");
+    const pwdInput = document.getElementById("regPassword");
+
+    // Toggle password visibility
+    if (togglePwd && pwdInput) {
+        togglePwd.onclick = () => {
+            const isText = pwdInput.type === "text";
+            pwdInput.type = isText ? "password" : "text";
+            togglePwd.innerHTML = isText
+                ? '<i class="bi bi-eye"></i>'
+                : '<i class="bi bi-eye-slash"></i>';
+        };
+    }
+
+    function showAlert(message, type = "danger") {
+        alertBox.className =
+            `alert alert-${type} py-2 px-3 small mb-3`;
+        alertBox.textContent = message;
+        alertBox.classList.remove("d-none");
+    }
+
+    function hideAlert() {
+        alertBox.classList.add("d-none");
+    }
+
+    function mapFirebaseError(code) {
+        const messages = {
+            "auth/email-already-in-use":
+                "This email already has an account. Please sign in.",
+            "auth/weak-password":
+                "Use a password with at least 6 characters.",
+            "auth/invalid-email":
+                "Please enter a valid email address.",
+            "auth/popup-closed-by-user":
+                "Google sign-up was closed before completion.",
+            "auth/network-request-failed":
+                "Network error. Check your internet connection.",
+            "auth/too-many-requests":
+                "Too many attempts. Please try again later.",
+            "auth/operation-not-allowed":
+                "Enable Email/Password or Google sign-in in Firebase Authentication.",
+            "auth/unauthorized-domain":
+                "This website domain is not authorized in Firebase."
+        };
+
+        return messages[code] || code || "Something went wrong.";
+    }
+
+    // Synchronize an authenticated Firebase user with Flask
+    async function syncSessionWithBackend(user, chosenUsername) {
+        // Force refresh so the backend receives the latest verification status.
+        const idToken = await user.getIdToken(true);
+        const username =
+            chosenUsername ||
+            user.displayName ||
+            user.email.split("@")[0];
+
+        const response = await fetch("/api/auth/firebase-login", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({
+                idToken,
+                username
+            })
+        });
+
+        const data = await response.json();
+
+        if (!response.ok || !data.success) {
+            throw new Error(
+                data.error || "Backend session synchronization failed."
+            );
+        }
+
+        window.location.href = data.redirect || "/dashboard";
+    }
+
+    // Google sign-up
+    googleBtn.onclick = async () => {
+        hideAlert();
+        googleBtn.disabled = true;
+        googleBtn.textContent = "Connecting to Google...";
+
+        try {
+            const result = await signInWithPopup(auth, googleProvider);
+
+            if (!result.user.emailVerified) {
+                showAlert(
+                    "Please verify your email before continuing."
+                );
+                await signOut(auth);
+                return;
+            }
+
+            await syncSessionWithBackend(result.user);
+
+        } catch (error) {
+            console.error("Google sign-up error:", error);
+            showAlert(
+                error.message || mapFirebaseError(error.code)
+            );
+
+        } finally {
+            googleBtn.disabled = false;
+            googleBtn.innerHTML =
+                '<span>Sign up with Google</span>';
+        }
+    };
+
+    // Email and password registration
+    regForm.onsubmit = async (event) => {
+        event.preventDefault();
+        hideAlert();
+
+        const username =
+            document.getElementById("regUsername").value.trim();
+        const email =
+            document.getElementById("regEmail").value.trim();
+        const password =
+            document.getElementById("regPassword").value;
+        const confirmPassword =
+            document.getElementById("regConfirmPassword").value;
+
+        if (!username) {
+            showAlert("Please enter your name or username.");
+            return;
+        }
+
+        if (password !== confirmPassword) {
+            showAlert("Passwords do not match.");
+            return;
+        }
+
+        if (password.length < 6) {
+            showAlert("Password must contain at least 6 characters.");
+            return;
+        }
+
+        regBtn.disabled = true;
+        regBtn.textContent = "Creating account...";
+
+        try {
+            // Create the Firebase account
+            const credential =
+                await createUserWithEmailAndPassword(
+                    auth,
+                    email,
+                    password
+                );
+
+            const user = credential.user;
+
+            // Save the display name
+            await updateProfile(user, {
+                displayName: username
+            });
+
+            // Send verification email
+            await sendEmailVerification(user);
+
+            // Do not create a Flask session before verification
+            await signOut(auth);
+
+            regForm.reset();
+
+            showAlert(
+                "Account created! Check your inbox and click the Firebase verification link. Then sign in.",
+                "success"
+            );
+
+        } catch (error) {
+            console.error("Registration error:", error);
+
+            showAlert(
+                mapFirebaseError(error.code) ||
+                error.message ||
+                "Registration failed."
+            );
+
+        } finally {
+            regBtn.disabled = false;
+            regBtn.innerHTML =
+                '<i class="bi bi-person-plus-fill"></i> Create Account with Firebase';
+        }
+    };
+</script>
+
+
+</body>
 </html>

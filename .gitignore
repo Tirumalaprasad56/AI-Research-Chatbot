@@ -1,5 +1,36 @@
+# Virtual environments
 venv/
+.venv/
+env/
+ENV/
+
+# Environment secrets
 .env
+.env.local
+
+# Python cache & artifacts
 __pycache__/
-uploads/
+*.py[cod]
+*$py.class
+*.so
+.pytest_cache/
+
+# User uploads & generated exports
+uploads/*
+!uploads/.gitkeep
+exports/*
+!exports/.gitkeep
+generated_ppt/*
+!generated_ppt/.gitkeep
+
+# SQLite database
+database/*.db
 *.db
+*.sqlite3
+
+# Operating system & IDE files
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+node_modules/

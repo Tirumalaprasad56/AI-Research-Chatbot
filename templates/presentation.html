@@ -1,317 +1,158 @@
-<!DOCTYPE html>
-<html lang="en">
+{% extends "base.html" %}
 
-<head>
+{% block title %}AI Presentation Deck Generator{% endblock %}
+{% block page_heading %}Presentation Deck Studio{% endblock %}
+{% block page_subheading %}Generate 16:9 widescreen PowerPoint slides with custom academic & executive themes{% endblock %}
 
-<meta charset="UTF-8">
+{% block content %}
+<div class="row g-4">
+    <!-- Left Configuration Column -->
+    <div class="col-lg-5">
+        <div class="card-pro mb-4">
+            <div class="card-pro-header">
+                <h3 class="card-pro-title">
+                    <i class="bi bi-sliders2 text-primary"></i>
+                    Deck Parameters
+                </h3>
+            </div>
+            <div class="card-pro-body">
+                <!-- Topic Input -->
+                <div class="mb-3">
+                    <label class="form-label fw-bold text-light">Presentation Topic</label>
+                    <input type="text" id="pptTopic" class="form-control-pro" placeholder="e.g. Advancements in Large Multimodal Models, Clean Energy Storage..." autofocus>
+                </div>
 
-<meta name="viewport"
-content="width=device-width, initial-scale=1.0">
+                <!-- Slide Count -->
+                <div class="mb-3">
+                    <label class="form-label fw-bold text-light">Target Slide Count</label>
+                    <select id="slideCount" class="form-control-pro">
+                        <option value="5">5 Slides &bull; Fast Pitch</option>
+                        <option value="8" selected>8 Slides &bull; Standard Academic / Project</option>
+                        <option value="10">10 Slides &bull; Comprehensive Lecture</option>
+                        <option value="12">12 Slides &bull; In-depth Thesis Defense</option>
+                        <option value="15">15 Slides &bull; Full Conference Briefing</option>
+                    </select>
+                </div>
 
-<title>AI Presentation Generator</title>
+                <!-- Theme Selection -->
+                <div class="mb-4">
+                    <label class="form-label fw-bold text-light mb-2">Color Theme & Layout</label>
+                    <div class="d-flex flex-column gap-2" id="themePickerGroup">
+                        <label class="theme-option-box d-flex align-items-center justify-content-between p-3 border rounded-3 cursor-pointer" style="background:var(--bg-input); border-color:var(--border-subtle);">
+                            <div class="d-flex align-items-center gap-3">
+                                <input type="radio" name="pptTheme" value="Modern" checked class="form-check-input mt-0">
+                                <div>
+                                    <div class="fw-bold text-light">Modern Indigo</div>
+                                    <small class="text-muted">Tech conference, modern AI presentations</small>
+                                </div>
+                            </div>
+                            <div class="d-flex gap-1">
+                                <span style="width:14px;height:14px;border-radius:50%;background:#4f46e5;"></span>
+                                <span style="width:14px;height:14px;border-radius:50%;background:#ec4899;"></span>
+                            </div>
+                        </label>
 
-<link
-href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
-rel="stylesheet">
+                        <label class="theme-option-box d-flex align-items-center justify-content-between p-3 border rounded-3 cursor-pointer" style="background:var(--bg-input); border-color:var(--border-subtle);">
+                            <div class="d-flex align-items-center gap-3">
+                                <input type="radio" name="pptTheme" value="Professional" class="form-check-input mt-0">
+                                <div>
+                                    <div class="fw-bold text-light">Obsidian Executive</div>
+                                    <small class="text-muted">Executive defense, board meetings</small>
+                                </div>
+                            </div>
+                            <div class="d-flex gap-1">
+                                <span style="width:14px;height:14px;border-radius:50%;background:#0f172a;"></span>
+                                <span style="width:14px;height:14px;border-radius:50%;background:#d97706;"></span>
+                            </div>
+                        </label>
 
-<link
-rel="stylesheet"
-href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+                        <label class="theme-option-box d-flex align-items-center justify-content-between p-3 border rounded-3 cursor-pointer" style="background:var(--bg-input); border-color:var(--border-subtle);">
+                            <div class="d-flex align-items-center gap-3">
+                                <input type="radio" name="pptTheme" value="Business" class="form-check-input mt-0">
+                                <div>
+                                    <div class="fw-bold text-light">Royal Blue Corporate</div>
+                                    <small class="text-muted">Industry standard, corporate tech</small>
+                                </div>
+                            </div>
+                            <div class="d-flex gap-1">
+                                <span style="width:14px;height:14px;border-radius:50%;background:#1e3a8a;"></span>
+                                <span style="width:14px;height:14px;border-radius:50%;background:#0ea5e9;"></span>
+                            </div>
+                        </label>
 
-<link
-rel="stylesheet"
-href="{{ url_for('static',filename='css/presentation.css') }}">
+                        <label class="theme-option-box d-flex align-items-center justify-content-between p-3 border rounded-3 cursor-pointer" style="background:var(--bg-input); border-color:var(--border-subtle);">
+                            <div class="d-flex align-items-center gap-3">
+                                <input type="radio" name="pptTheme" value="Technology" class="form-check-input mt-0">
+                                <div>
+                                    <div class="fw-bold text-light">Cyber Teal</div>
+                                    <small class="text-muted">Science, biotechnology, engineering</small>
+                                </div>
+                            </div>
+                            <div class="d-flex gap-1">
+                                <span style="width:14px;height:14px;border-radius:50%;background:#0f766e;"></span>
+                                <span style="width:14px;height:14px;border-radius:50%;background:#14b8a6;"></span>
+                            </div>
+                        </label>
+                    </div>
+                </div>
 
-</head>
+                <button id="generatePptBtn" class="btn-pro btn-pro-primary w-100 py-3">
+                    <i class="bi bi-file-earmark-ppt-fill fs-5"></i>
+                    <span>Generate Presentation (.pptx)</span>
+                </button>
+            </div>
+        </div>
 
-<body>
+        <!-- Recent Decks History -->
+        <div class="card-pro">
+            <div class="card-pro-header">
+                <h3 class="card-pro-title">
+                    <i class="bi bi-clock-history text-muted"></i>
+                    Generated Decks History
+                </h3>
+            </div>
+            <div class="card-pro-body" id="presentationHistoryList">
+                <div class="empty-state-pro py-3">
+                    <p class="small mb-0">No past presentations found.</p>
+                </div>
+            </div>
+        </div>
+    </div>
 
-<div class="app-container">
+    <!-- Right Slide Deck Preview Column -->
+    <div class="col-lg-7">
+        <div class="card-pro h-100">
+            <div class="card-pro-header">
+                <h3 class="card-pro-title">
+                    <i class="bi bi-easel text-info"></i>
+                    Slide Deck Preview & Status
+                </h3>
+                <span id="deckStatusBadge" class="badge bg-secondary bg-opacity-25 text-light">Ready</span>
+            </div>
 
-<!-- SIDEBAR -->
+            <div class="card-pro-body">
+                <!-- Status Banner -->
+                <div id="pptStatusMessage" class="mb-4">
+                    <div class="alert alert-info d-flex align-items-center gap-2 mb-0" style="background:rgba(14, 165, 233, 0.1); border-color:rgba(14, 165, 233, 0.2); color:#7dd3fc;">
+                        <i class="bi bi-info-circle-fill"></i>
+                        <span>Select a topic and theme on the left, then click <strong>Generate Presentation</strong>.</span>
+                    </div>
+                </div>
 
-<aside class="sidebar">
-
-<div class="logo">
-
-🤖 AI Research
-
+                <!-- Preview Area -->
+                <div id="slidePreviewArea" class="p-3 rounded-3" style="background:var(--bg-input); min-height: 480px; border:1px solid var(--border-subtle);">
+                    <div class="empty-state-pro py-5">
+                        <i class="bi bi-file-earmark-slides display-3 text-muted"></i>
+                        <h4 class="mt-3">Deck Preview</h4>
+                        <p>Your structured slides and download link will appear here once generated.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
-
-<ul>
-
-<li>
-
-<a href="/dashboard">
-
-<i class="bi bi-grid-fill"></i>
-
-Dashboard
-
-</a>
-
-</li>
-
-<li>
-
-<a href="/reports">
-
-<i class="bi bi-file-earmark-text-fill"></i>
-
-AI Reports
-
-</a>
-
-</li>
-
-<li class="active">
-
-<a href="/presentation">
-
-<i class="bi bi-file-earmark-ppt-fill"></i>
-
-Presentation
-
-</a>
-
-</li>
-
-<li>
-
-<a href="/analyzer">
-
-<i class="bi bi-search"></i>
-
-Document Analyzer
-
-</a>
-
-</li>
-
-<li>
-
-<a href="/chat">
-
-<i class="bi bi-robot"></i>
-
-AI Chat
-
-</a>
-
-</li>
-
-<li>
-
-<a href="/logout">
-
-<i class="bi bi-box-arrow-right"></i>
-
-Logout
-
-</a>
-
-</li>
-
-</ul>
-
-</aside>
-
-<!-- MAIN -->
-
-<main class="main">
-
-<div class="topbar">
-
-<div>
-
-<h2>
-
-AI Presentation Generator
-
-</h2>
-
-<p>
-
-Generate professional PowerPoint presentations with AI.
-
-</p>
-
-</div>
-
-<div class="profile">
-
-👋 {{ username }}
-
-</div>
-
-</div>
-
-<div class="workspace">
-
-<!-- LEFT -->
-
-<div class="card workspace-card">
-
-<div class="card-header">
-
-Presentation Details
-
-</div>
-
-<div class="card-body">
-
-<label>
-
-Presentation Topic
-
-</label>
-
-<input
-
-id="pptTopic"
-
-class="form-control"
-
-placeholder="Enter topic">
-
-<br>
-
-<label>
-
-Number of Slides
-
-</label>
-
-<select
-
-id="slideCount"
-
-class="form-select">
-
-<option>5</option>
-
-<option>8</option>
-
-<option>10</option>
-
-<option>15</option>
-
-<option>20</option>
-
-</select>
-
-<br>
-
-<label>
-
-Presentation Theme
-
-</label>
-
-<select
-
-id="pptTheme"
-
-class="form-select">
-
-<option>Professional</option>
-
-<option>Business</option>
-
-<option>Education</option>
-
-<option>Modern</option>
-
-<option>Technology</option>
-
-</select>
-
-<br>
-
-<button
-
-id="generatePresentationBtn"
-
-class="btn btn-primary w-100">
-
-<i class="bi bi-stars"></i>
-
-Generate Presentation
-
-</button>
-
-</div>
-
-</div>
-
-<!-- RIGHT -->
-
-<div class="card workspace-card">
-
-<div class="card-header">
-
-Presentation Preview
-
-</div>
-
-<div
-
-id="slidePreview"
-
-class="card-body preview-area">
-
-<div class="empty-state">
-
-<i class="bi bi-file-earmark-ppt display-1"></i>
-
-<h4>
-
-Presentation Preview
-
-</h4>
-
-<p>
-
-Your presentation preview will appear here.
-
-</p>
-
-</div>
-
-</div>
-
-</div>
-
-</div>
-
-<div class="card workspace-card mt-4">
-
-<div class="card-header">
-
-Generation Status
-
-</div>
-
-<div
-
-id="pptStatus"
-
-class="card-body">
-
-Ready to generate presentation.
-
-</div>
-
-</div>
-
-</main>
-
-</div>
-
-<script src="{{ url_for('static',filename='js/common.js') }}"></script>
-
-<script src="{{ url_for('static',filename='js/presentation.js') }}"></script>
-
-</body>
-
-</html>
+{% endblock %}
+
+{% block scripts %}
+<script src="{{ url_for('static', filename='js/presentation.js') }}"></script>
+{% endblock %}

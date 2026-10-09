@@ -1,437 +1,232 @@
-<!DOCTYPE html>
-<html lang="en">
-
-<head>
-
-<meta charset="UTF-8">
-
-<meta name="viewport"
-content="width=device-width, initial-scale=1.0">
-
-<title>Document Analyzer</title>
-
-<link
-href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
-rel="stylesheet">
-
-<link
-rel="stylesheet"
-href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
-
-<link
-rel="stylesheet"
-href="{{ url_for('static', filename='css/analyzer.css') }}">
-
-</head>
-
-<body>
-
-<div class="app-container">
-
-    <!-- ===================== -->
-    <!-- SIDEBAR -->
-    <!-- ===================== -->
-
-    <aside class="sidebar">
-
-        <div class="logo">
-
-            🤖 AI Research
-
-        </div>
-
-        <ul>
-
-            <li>
-
-                <a href="/dashboard">
-
-                    <i class="bi bi-grid-fill"></i>
-
-                    Dashboard
-
-                </a>
-
-            </li>
-
-            <li>
-
-                <a href="/reports">
-
-                    <i class="bi bi-file-earmark-text-fill"></i>
-
-                    AI Reports
-
-                </a>
-
-            </li>
-
-            <li>
-
-                <a href="/presentation">
-
-                    <i class="bi bi-file-earmark-ppt-fill"></i>
-
-                    Presentation
-
-                </a>
-
-            </li>
-
-            <li class="active">
-
-                <a href="/analyzer">
-
-                    <i class="bi bi-search"></i>
-
-                    Document Analyzer
-
-                </a>
-
-            </li>
-
-            <li>
-
-                <a href="/chat">
-
-                    <i class="bi bi-robot"></i>
-
-                    AI Chat
-
-                </a>
-
-            </li>
-
-            <li>
-
-                <a href="/logout">
-
-                    <i class="bi bi-box-arrow-right"></i>
-
-                    Logout
-
-                </a>
-
-            </li>
-
-        </ul>
-
-    </aside>
-
-    <!-- ===================== -->
-    <!-- MAIN -->
-    <!-- ===================== -->
-
-    <main class="main">
-
-        <!-- Top Bar -->
-
-        <div class="topbar">
-
-            <div>
-
-                <h2>
-
-                    Document Analyzer
-
-                </h2>
-
-                <p>
-
-                    Upload documents and let AI summarize, analyze and answer questions.
-
-                </p>
-
-            </div>
-
-            <div class="profile">
-
-                👋 {{ username }}
-
-            </div>
-
-        </div>
-
-        <!-- Row 1 -->
-
-        <div class="workspace-row">
-
-            <!-- Upload -->
-
-            <div class="card workspace-card">
-
-                <div class="card-header">
-
-                    <i class="bi bi-cloud-upload-fill"></i>
-
+{% extends "base.html" %}
+
+{% block title %}Research Document & Paper Analyzer{% endblock %}
+{% block page_heading %}Document & Paper Analyzer{% endblock %}
+{% block page_subheading %}Upload academic papers, dissertations, and technical documents for AI deep-dive extraction{% endblock %}
+
+{% block content %}
+<div class="row g-4 mb-4">
+    <!-- Left Column: Document Upload & Library -->
+    <div class="col-lg-4">
+        <!-- Upload Card -->
+        <div class="card-pro mb-4">
+            <div class="card-pro-header">
+                <h3 class="card-pro-title">
+                    <i class="bi bi-cloud-arrow-up-fill text-primary"></i>
                     Upload Document
-
-                </div>
-
-                <div class="card-body">
-
-                    <input
-
-                    type="file"
-
-                    id="documentFile"
-
-                    class="form-control"
-
-                    accept=".pdf,.docx,.txt">
-
-                    <button
-
-                    id="uploadBtn"
-
-                    class="btn btn-primary w-100 mt-3">
-
-                        <i class="bi bi-upload"></i>
-
-                        Upload Document
-
-                    </button>
-
-                    <hr>
-
-                    <h6>
-
-                        Uploaded Documents
-
-                    </h6>
-
-                    <div id="documentList">
-
-                        No uploaded documents.
-
-                    </div>
-
-                </div>
-
+                </h3>
             </div>
-
-            <!-- Preview -->
-
-            <div class="card workspace-card">
-
-                <div class="card-header">
-
-                    <i class="bi bi-file-earmark-text"></i>
-
-                    Document Preview
-
+            <div class="card-pro-body">
+                <div class="upload-dropzone p-4 text-center rounded-3 border-2 border-dashed mb-3" id="dropzoneArea" style="border: 2px dashed var(--border-subtle); background: var(--bg-input); cursor: pointer; transition: var(--transition);">
+                    <i class="bi bi-file-earmark-arrow-up display-4 text-primary mb-2 d-inline-block"></i>
+                    <h6 class="text-light mb-1">Click to browse or drop file here</h6>
+                    <p class="text-muted small mb-0">PDF (.pdf), Word (.docx), or Text (.txt) up to 32MB</p>
+                    <input type="file" id="documentFileInput" class="d-none" accept=".pdf,.docx,.txt">
                 </div>
 
-                <div
-
-                id="report"
-
-                class="card-body preview-area">
-
-                    <div class="empty-state">
-
-                        <i class="bi bi-file-earmark display-1"></i>
-
-                        <h5>
-
-                            No Document Selected
-
-                        </h5>
-
-                        <p>
-
-                            Select a document from the left panel.
-
-                        </p>
-
-                    </div>
-
-                </div>
-
-            </div>
-
-        </div>
-
-        <!-- Row 2 -->
-
-        <div class="workspace-row">
-
-            <!-- Analysis -->
-
-            <div class="card workspace-card">
-
-                <div class="card-header">
-
-                    AI Analysis Tools
-
-                </div>
-
-                <div class="card-body">
-
-                    <div class="analysis-grid">
-
-                        <button id="summaryBtn" class="tool-card">
-
-                            <i class="bi bi-card-text"></i>
-
-                            <span>Summary</span>
-
-                        </button>
-
-                        <button id="keywordsBtn" class="tool-card">
-
-                            <i class="bi bi-key"></i>
-
-                            <span>Keywords</span>
-
-                        </button>
-
-                        <button id="pointsBtn" class="tool-card">
-
-                            <i class="bi bi-list-check"></i>
-
-                            <span>Key Points</span>
-
-                        </button>
-
-                        <button id="abstractBtn" class="tool-card">
-
-                            <i class="bi bi-journal-text"></i>
-
-                            <span>Abstract</span>
-
-                        </button>
-
-                        <button id="quizBtn" class="tool-card">
-
-                            <i class="bi bi-patch-question"></i>
-
-                            <span>Quiz</span>
-
-                        </button>
-
-                        <button id="interviewBtn" class="tool-card">
-
-                            <i class="bi bi-person-video3"></i>
-
-                            <span>Interview</span>
-
-                        </button>
-
-                        <button id="conceptBtn" class="tool-card">
-
-                            <i class="bi bi-lightbulb"></i>
-
-                            <span>Concepts</span>
-
-                        </button>
-
-                    </div>
-
-                </div>
-
-            </div>
-
-            <!-- Result -->
-
-            <div class="card workspace-card">
-
-                <div class="card-header">
-
-                    AI Analysis Result
-
-                </div>
-
-                <div
-
-                id="analysisResult"
-
-                class="card-body result-area">
-
-                    <div class="empty-state">
-
-                        <i class="bi bi-robot display-1"></i>
-
-                        <h5>
-
-                            Analysis Result
-
-                        </h5>
-
-                        <p>
-
-                            Select an analysis tool to generate AI insights.
-
-                        </p>
-
-                    </div>
-
-                </div>
-
-            </div>
-
-        </div>
-
-        <!-- Ask AI -->
-
-        <div class="card workspace-card">
-
-            <div class="card-header">
-
-                <i class="bi bi-chat-left-text-fill"></i>
-
-                Ask AI About Document
-
-            </div>
-
-            <div class="card-body">
-
-                <textarea
-
-                id="documentQuestion"
-
-                class="form-control"
-
-                rows="4"
-
-                placeholder="Ask anything about the uploaded document...">
-
-                </textarea>
-
-                <button
-
-                id="askDocumentBtn"
-
-                class="btn btn-success mt-3">
-
-                    <i class="bi bi-send-fill"></i>
-
-                    Ask AI
-
+                <button id="uploadDocumentBtn" class="btn-pro btn-pro-primary w-100 py-2" disabled>
+                    <i class="bi bi-upload"></i> Upload & Parse Document
                 </button>
-
-                <hr>
-
-                <div
-
-                id="documentAnswer">
-
-                </div>
-
             </div>
-
         </div>
 
-    </main>
+        <!-- Document Library Card -->
+        <div class="card-pro">
+            <div class="card-pro-header">
+                <h3 class="card-pro-title">
+                    <i class="bi bi-folder2-open text-info"></i>
+                    Document Library
+                </h3>
+                <button type="button" class="btn btn-sm btn-outline-secondary" onclick="loadDocumentList()" title="Refresh">
+                    <i class="bi bi-arrow-clockwise"></i>
+                </button>
+            </div>
+            <div class="card-pro-body" style="max-height: 480px; overflow-y: auto;" id="documentListContainer">
+                <div class="empty-state-pro py-4">
+                    <div class="spinner-border text-primary spinner-border-sm mb-2" role="status"></div>
+                    <p class="small">Loading library...</p>
+                </div>
+            </div>
+        </div>
+    </div>
 
+    <!-- Right Column: Document Preview & Active File Details -->
+    <div class="col-lg-8">
+        <div class="card-pro h-100">
+            <div class="card-pro-header flex-wrap gap-2">
+                <div class="d-flex align-items-center gap-2">
+                    <i class="bi bi-file-earmark-richtext-fill text-primary fs-5"></i>
+                    <h3 class="card-pro-title" id="selectedDocTitle">No Document Selected</h3>
+                </div>
+                <div class="d-flex align-items-center gap-2" id="docMetaPills">
+                    <span class="badge bg-secondary bg-opacity-25 text-light" id="docStatsPill">0 Words</span>
+                </div>
+            </div>
+
+            <div class="card-pro-body d-flex flex-column" style="min-height: 400px;">
+                <div id="documentPreviewContent" class="flex-grow-1 p-3 rounded-3" style="background: var(--bg-input); border: 1px solid var(--border-subtle); max-height: 400px; overflow-y: auto;">
+                    <div class="empty-state-pro py-5">
+                        <i class="bi bi-file-earmark-text display-3 text-muted"></i>
+                        <h4 class="mt-3">Document Preview</h4>
+                        <p>Upload a file or choose one from your library on the left to read its extracted text and run AI analysis tools.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
 
-<script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+<!-- AI Analysis Suite & Grounded Q&A Section -->
+<div class="row g-4">
+    <!-- Analysis Tools -->
+    <div class="col-lg-6">
+        <div class="card-pro h-100">
+            <div class="card-pro-header">
+                <h3 class="card-pro-title">
+                    <i class="bi bi-tools text-primary"></i>
+                    AI Analysis Tool Suite
+                </h3>
+                <span class="badge bg-primary bg-opacity-25 text-info">12 Modes</span>
+            </div>
+            <div class="card-pro-body">
+                <!-- Nav Tabs for Tools -->
+                <ul class="nav nav-pills mb-3 gap-2" id="analysisTabs" role="tablist">
+                    <li class="nav-item">
+                        <button class="nav-link active btn-sm" id="tab-core" data-bs-toggle="pill" data-bs-target="#content-core" type="button">Core Insights</button>
+                    </li>
+                    <li class="nav-item">
+                        <button class="nav-link btn-sm" id="tab-deep" data-bs-toggle="pill" data-bs-target="#content-deep" type="button">Academic Deep-Dive</button>
+                    </li>
+                    <li class="nav-item">
+                        <button class="nav-link btn-sm" id="tab-learning" data-bs-toggle="pill" data-bs-target="#content-learning" type="button">Learning & Viva</button>
+                    </li>
+                </ul>
 
-<script src="{{ url_for('static', filename='js/common.js') }}"></script>
+                <div class="tab-content" id="analysisTabContent">
+                    <!-- Tab 1: Core Insights -->
+                    <div class="tab-pane fade show active" id="content-core" role="tabpanel">
+                        <div class="d-grid gap-2" style="grid-template-columns: repeat(2, 1fr);">
+                            <button class="btn-pro btn-pro-secondary text-start py-3" onclick="triggerAnalysis('summary')">
+                                <i class="bi bi-card-text text-primary fs-5 d-block mb-1"></i>
+                                <span class="fw-bold d-block text-white">Executive Summary</span>
+                                <small class="text-muted">High-level synthesis</small>
+                            </button>
+                            <button class="btn-pro btn-pro-secondary text-start py-3" onclick="triggerAnalysis('abstract')">
+                                <i class="bi bi-journal-text text-info fs-5 d-block mb-1"></i>
+                                <span class="fw-bold d-block text-white">Academic Abstract</span>
+                                <small class="text-muted">Formal structured abstract</small>
+                            </button>
+                            <button class="btn-pro btn-pro-secondary text-start py-3" onclick="triggerAnalysis('points')">
+                                <i class="bi bi-list-check text-success fs-5 d-block mb-1"></i>
+                                <span class="fw-bold d-block text-white">Key Findings</span>
+                                <small class="text-muted">Top 10 bullet takeaways</small>
+                            </button>
+                            <button class="btn-pro btn-pro-secondary text-start py-3" onclick="triggerAnalysis('keywords')">
+                                <i class="bi bi-key-fill text-warning fs-5 d-block mb-1"></i>
+                                <span class="fw-bold d-block text-white">Keywords Matrix</span>
+                                <small class="text-muted">Extracted terms with glossary</small>
+                            </button>
+                        </div>
+                    </div>
 
+                    <!-- Tab 2: Academic Deep Dive -->
+                    <div class="tab-pane fade" id="content-deep" role="tabpanel">
+                        <div class="d-grid gap-2" style="grid-template-columns: repeat(2, 1fr);">
+                            <button class="btn-pro btn-pro-secondary text-start py-3" onclick="triggerAnalysis('methodology')">
+                                <i class="bi bi-diagram-3-fill text-info fs-5 d-block mb-1"></i>
+                                <span class="fw-bold d-block text-white">Methodology Breakdown</span>
+                                <small class="text-muted">Experimental workflow</small>
+                            </button>
+                            <button class="btn-pro btn-pro-secondary text-start py-3" onclick="triggerAnalysis('novelty')">
+                                <i class="bi bi-lightbulb-fill text-warning fs-5 d-block mb-1"></i>
+                                <span class="fw-bold d-block text-white">Core Novelty</span>
+                                <small class="text-muted">What is genuinely new</small>
+                            </button>
+                            <button class="btn-pro btn-pro-secondary text-start py-3" onclick="triggerAnalysis('gap')">
+                                <i class="bi bi-search text-danger fs-5 d-block mb-1"></i>
+                                <span class="fw-bold d-block text-white">Research Gaps</span>
+                                <small class="text-muted">Unsolved challenges</small>
+                            </button>
+                            <button class="btn-pro btn-pro-secondary text-start py-3" onclick="triggerAnalysis('limitations')">
+                                <i class="bi bi-exclamation-triangle-fill text-danger fs-5 d-block mb-1"></i>
+                                <span class="fw-bold d-block text-white">Limitations</span>
+                                <small class="text-muted">Threats to validity</small>
+                            </button>
+                            <button class="btn-pro btn-pro-secondary text-start py-3" onclick="triggerAnalysis('future')">
+                                <i class="bi bi-arrow-repeat text-success fs-5 d-block mb-1"></i>
+                                <span class="fw-bold d-block text-white">Future Directions</span>
+                                <small class="text-muted">Next research steps</small>
+                            </button>
+                            <button class="btn-pro btn-pro-secondary text-start py-3" onclick="triggerAnalysis('references')">
+                                <i class="bi bi-book-fill text-primary fs-5 d-block mb-1"></i>
+                                <span class="fw-bold d-block text-white">Key Citations</span>
+                                <small class="text-muted">Foundational references</small>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Tab 3: Learning & Viva Prep -->
+                    <div class="tab-pane fade" id="content-learning" role="tabpanel">
+                        <div class="d-grid gap-2" style="grid-template-columns: repeat(2, 1fr);">
+                            <button class="btn-pro btn-pro-secondary text-start py-3" onclick="triggerAnalysis('quiz')">
+                                <i class="bi bi-patch-question-fill text-info fs-5 d-block mb-1"></i>
+                                <span class="fw-bold d-block text-white">Interactive Quiz</span>
+                                <small class="text-muted">10 Q&A with answer key</small>
+                            </button>
+                            <button class="btn-pro btn-pro-secondary text-start py-3" onclick="triggerAnalysis('interview')">
+                                <i class="bi bi-person-video3 text-success fs-5 d-block mb-1"></i>
+                                <span class="fw-bold d-block text-white">Viva / Interview Prep</span>
+                                <small class="text-muted">10 technical defense queries</small>
+                            </button>
+                            <button class="btn-pro btn-pro-secondary text-start py-3" onclick="triggerAnalysis('concepts')">
+                                <i class="bi bi-mortarboard-fill text-warning fs-5 d-block mb-1"></i>
+                                <span class="fw-bold d-block text-white">Explain Difficult Concepts</span>
+                                <small class="text-muted">Simplified with analogies</small>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <hr class="border-secondary my-4">
+
+                <!-- Grounded Ask AI Box -->
+                <h5 class="text-white mb-2"><i class="bi bi-chat-left-dots text-primary me-2"></i>Ask Document Specific Question</h5>
+                <div class="input-group">
+                    <input type="text" id="documentQuestionInput" class="form-control-pro" placeholder="e.g. What dataset was used? What were the benchmark F1 scores?">
+                    <button id="askDocumentBtn" class="btn-pro btn-pro-primary px-3">
+                        <i class="bi bi-send-fill"></i> Ask AI
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- AI Analysis Results Pane -->
+    <div class="col-lg-6">
+        <div class="card-pro h-100">
+            <div class="card-pro-header justify-content-between">
+                <div class="d-flex align-items-center gap-2">
+                    <i class="bi bi-cpu text-success fs-5"></i>
+                    <h3 class="card-pro-title" id="analysisResultHeading">AI Analysis Output</h3>
+                </div>
+                <button type="button" class="btn-pro btn-pro-secondary btn-sm" id="copyAnalysisBtn" onclick="copyAnalysisOutput()" disabled>
+                    <i class="bi bi-clipboard"></i> Copy
+                </button>
+            </div>
+            <div class="card-pro-body" style="min-height: 480px; max-height: 620px; overflow-y: auto;">
+                <div id="analysisResultContent">
+                    <div class="empty-state-pro py-5">
+                        <i class="bi bi-robot display-3 text-muted"></i>
+                        <h4 class="mt-3">Awaiting Analysis</h4>
+                        <p>Select any tool from the suite or ask a question to generate grounded AI insights from your document.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
 <script src="{{ url_for('static', filename='js/analyzer.js') }}"></script>
-
-</body>
-
-</html>
+{% endblock %}

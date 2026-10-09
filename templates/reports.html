@@ -1,360 +1,123 @@
-<!DOCTYPE html>
-<html lang="en">
+{% extends "base.html" %}
 
-<head>
+{% block title %}Research Reports Studio{% endblock %}
+{% block page_heading %}AI Research Reports{% endblock %}
+{% block page_subheading %}Generate publication-grade academic literature surveys with structured methodologies and citations{% endblock %}
 
-<meta charset="UTF-8">
-
-<meta name="viewport"
-content="width=device-width, initial-scale=1.0">
-
-<title>AI Research Reports</title>
-
-<link
-href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
-rel="stylesheet">
-
-<link
-rel="stylesheet"
-href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
-
-<link
-rel="stylesheet"
-href="{{ url_for('static', filename='css/reports.css') }}">
-
-</head>
-
-<body>
-
-<div class="app-container">
-
-    <!-- ========================= -->
-    <!-- SIDEBAR -->
-    <!-- ========================= -->
-
-    <aside class="sidebar">
-
-        <div class="logo">
-
-            🤖 AI Research
-
+{% block content %}
+<!-- Topic Generation Bar -->
+<div class="card-pro mb-4">
+    <div class="card-pro-body">
+        <label class="form-label fw-bold text-light mb-2">
+            <i class="bi bi-stars text-primary me-1"></i> Research Topic or Problem Statement
+        </label>
+        <div class="input-group">
+            <input type="text" id="topicInput" class="form-control-pro" placeholder="e.g. Federated Learning in Medical Imaging Privacy, Autonomous Multi-Agent Systems, Quantum Cryptography..." autofocus>
+            <button id="generateReportBtn" class="btn-pro btn-pro-primary px-4">
+                <i class="bi bi-magic"></i> Generate Report
+            </button>
         </div>
 
-        <ul>
-
-            <li>
-
-                <a href="/dashboard">
-
-                    <i class="bi bi-grid-fill"></i>
-
-                    Dashboard
-
-                </a>
-
-            </li>
-
-            <li class="active">
-
-                <a href="/reports">
-
-                    <i class="bi bi-file-earmark-text-fill"></i>
-
-                    AI Reports
-
-                </a>
-
-            </li>
-
-            <li>
-
-                <a href="/presentation">
-
-                    <i class="bi bi-file-earmark-ppt-fill"></i>
-
-                    Presentation
-
-                </a>
-
-            </li>
-
-            <li>
-
-                <a href="/analyzer">
-
-                    <i class="bi bi-search"></i>
-
-                    Document Analyzer
-
-                </a>
-
-            </li>
-
-            <li>
-
-                <a href="/chat">
-
-                    <i class="bi bi-robot"></i>
-
-                    AI Chat
-
-                </a>
-
-            </li>
-
-            <li>
-
-                <a href="/logout">
-
-                    <i class="bi bi-box-arrow-right"></i>
-
-                    Logout
-
-                </a>
-
-            </li>
-
-        </ul>
-
-    </aside>
-
-    <!-- ========================= -->
-    <!-- MAIN -->
-    <!-- ========================= -->
-
-    <main class="main">
-
-        <!-- Top Bar -->
-
-        <div class="topbar">
-
-            <div>
-
-                <h2>
-
-                    AI Research Reports
-
-                </h2>
-
-                <p>
-
-                    Generate professional research reports powered by AI.
-
-                </p>
-
-            </div>
-
-            <div class="profile">
-
-                👋 {{ username }}
-
-            </div>
-
+        <!-- Topic presets -->
+        <div class="preset-chips">
+            <span class="text-muted small align-self-center me-1">Try prompt:</span>
+            <button type="button" class="chip-btn" onclick="setPreset('Transformer Self-Attention Optimizations')">Transformer Attention</button>
+            <button type="button" class="chip-btn" onclick="setPreset('Autonomous LLM Agents and Tool Use')">LLM Agents</button>
+            <button type="button" class="chip-btn" onclick="setPreset('CRISPR-Cas9 Therapeutic Advancements')">CRISPR Therapeutics</button>
+            <button type="button" class="chip-btn" onclick="setPreset('Solid-State Battery Energy Density')">Solid-State Batteries</button>
+            <button type="button" class="chip-btn" onclick="setPreset('Post-Quantum Cryptography Algorithms')">Post-Quantum Crypto</button>
         </div>
-
-        <!-- Topic Card -->
-
-        <div class="card workspace-card">
-
-            <div class="card-body">
-
-                <h5>
-
-                    Research Topic
-
-                </h5>
-
-                <div class="input-group mt-3">
-
-                    <input
-
-                    id="topic"
-
-                    class="form-control"
-
-                    placeholder="Enter research topic...">
-
-                    <button
-
-                    id="generateBtn"
-
-                    class="btn btn-primary">
-
-                        <i class="bi bi-stars"></i>
-
-                        Generate Report
-
-                    </button>
-
-                </div>
-
-            </div>
-
-        </div>
-
-        <!-- Workspace -->
-
-        <div class="workspace">
-
-            <!-- LEFT -->
-
-            <div class="left-panel">
-
-                <div class="card workspace-card">
-
-                    <div class="card-header">
-
-                        Research History
-
-                    </div>
-
-                    <div class="card-body">
-
-                        <input
-
-                        id="search"
-
-                        class="form-control"
-
-                        placeholder="Search Reports">
-
-                        <button
-
-                        id="newChat"
-
-                        class="btn btn-success w-100 mt-3">
-
-                            <i class="bi bi-plus-circle"></i>
-
-                            New Report
-
-                        </button>
-
-                        <hr>
-
-                        <div id="history">
-
-                            No reports yet.
-
-                        </div>
-
-                    </div>
-
-                </div>
-
-            </div>
-
-            <!-- RIGHT -->
-
-            <div class="right-panel">
-
-                <div
-                id="loading"
-                style="display:none;">
-
-                    <div class="alert alert-info">
-
-                        <div
-                        class="spinner-border spinner-border-sm">
-
-                        </div>
-
-                        AI is generating your report...
-
-                    </div>
-
-                </div>
-
-                <div class="card workspace-card">
-
-                    <div class="card-header d-flex justify-content-between align-items-center">
-
-                        <span>
-
-                            Generated Report
-
-                        </span>
-
-                        <div>
-
-                            <button
-
-                            id="pdfBtn"
-
-                            class="btn btn-danger btn-sm">
-
-                                PDF
-
-                            </button>
-
-                            <button
-
-                            id="docBtn"
-
-                            class="btn btn-primary btn-sm">
-
-                                Word
-
-                            </button>
-
-                            <button
-
-                            id="copyBtn"
-
-                            class="btn btn-secondary btn-sm">
-
-                                Copy
-
-                            </button>
-
-                        </div>
-
-                    </div>
-
-                    <div
-                    id="report"
-                    class="card-body report-area">
-
-                        <div class="empty-state">
-
-                            <i
-                            class="bi bi-file-earmark-text display-1">
-
-                            </i>
-
-                            <h4>
-
-                                No Report Generated
-
-                            </h4>
-
-                            <p>
-
-                                Enter a topic above and click
-                                Generate Report.
-
-                            </p>
-
-                        </div>
-
-                    </div>
-
-                </div>
-
-            </div>
-
-        </div>
-
-    </main>
-
+    </div>
 </div>
 
-<script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+<!-- Main Workspace Layout -->
+<div class="row g-4">
+    <!-- Left Drawer: Report History -->
+    <div class="col-lg-4">
+        <div class="card-pro h-100">
+            <div class="card-pro-header">
+                <h3 class="card-pro-title">
+                    <i class="bi bi-journal-bookmark-fill text-primary"></i>
+                    Research History
+                </h3>
+                <button id="newReportBtn" class="btn btn-sm btn-outline-primary" title="Start New Empty Report">
+                    <i class="bi bi-plus-lg"></i> New
+                </button>
+            </div>
+            <div class="card-pro-body">
+                <div class="mb-3">
+                    <input type="text" id="historySearchInput" class="form-control-pro" placeholder="Search saved reports...">
+                </div>
+                
+                <div id="historyListContainer" style="max-height: 600px; overflow-y: auto;">
+                    <div class="empty-state-pro py-4">
+                        <div class="spinner-border text-primary spinner-border-sm mb-2" role="status"></div>
+                        <p>Loading history...</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 
-<script src="{{ url_for('static', filename='js/common.js') }}"></script>
+    <!-- Right Pane: Report Workspace -->
+    <div class="col-lg-8">
+        <!-- Generation Progress Banner -->
+        <div id="generationProgressCard" class="card-pro mb-3 d-none">
+            <div class="card-pro-body py-3">
+                <div class="d-flex align-items-center gap-3">
+                    <div class="spinner-border text-primary spinner-border-sm" role="status"></div>
+                    <div>
+                        <div class="fw-bold text-white" id="progressStepTitle">Groq AI is synthesizing your literature survey...</div>
+                        <small class="text-muted" id="progressStepSubtitle">Surveying academic literature, structuring methodology, and formatting references.</small>
+                    </div>
+                </div>
+            </div>
+        </div>
 
+        <!-- Rendered Report Viewer -->
+        <div class="card-pro">
+            <div class="card-pro-header flex-wrap gap-2">
+                <div class="d-flex align-items-center gap-2">
+                    <h3 class="card-pro-title" id="currentReportTopicTitle">
+                        <i class="bi bi-file-earmark-text text-primary"></i>
+                        <span>Research Report Preview</span>
+                    </h3>
+                </div>
+
+                <div class="d-flex align-items-center gap-2" id="reportActionButtons">
+                    <button id="favoriteBtn" class="btn-pro btn-pro-secondary btn-sm" title="Bookmark / Favorite" disabled>
+                        <i class="bi bi-star"></i>
+                    </button>
+                    <button id="copyReportBtn" class="btn-pro btn-pro-secondary btn-sm" title="Copy Raw Text" disabled>
+                        <i class="bi bi-clipboard"></i> Copy
+                    </button>
+                    <div class="dropdown">
+                        <button class="btn-pro btn-pro-primary btn-sm dropdown-toggle" type="button" id="exportDropdownBtn" data-bs-toggle="dropdown" aria-expanded="false" disabled>
+                            <i class="bi bi-download"></i> Export
+                        </button>
+                        <ul class="dropdown-menu dropdown-menu-dark dropdown-menu-end" aria-labelledby="exportDropdownBtn">
+                            <li><button class="dropdown-item py-2" id="exportPdfBtn"><i class="bi bi-file-earmark-pdf text-danger me-2"></i> PDF Document (.pdf)</button></li>
+                            <li><button class="dropdown-item py-2" id="exportDocxBtn"><i class="bi bi-file-earmark-word text-primary me-2"></i> Word Document (.docx)</button></li>
+                            <li><button class="dropdown-item py-2" id="exportMdBtn"><i class="bi bi-markdown text-info me-2"></i> Markdown File (.md)</button></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card-pro-body" style="min-height: 500px;">
+                <div id="reportContentArea">
+                    <div class="empty-state-pro py-5">
+                        <i class="bi bi-journal-text display-4 text-muted"></i>
+                        <h4>No Report Displayed</h4>
+                        <p>Enter a topic above and click <strong>Generate Report</strong>, or select an existing survey from your history.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
 <script src="{{ url_for('static', filename='js/reports.js') }}"></script>
-
-</body>
-
-</html>
+{% endblock %}

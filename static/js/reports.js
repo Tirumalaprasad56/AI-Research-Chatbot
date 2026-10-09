@@ -1,701 +1,331 @@
-// =====================================
-// REPORTS PAGE
-// =====================================
+// ==========================================================================
+// REPORTS STUDIO LOGIC (2026 PRO EDITION)
+// ==========================================================================
 
-// =====================================
-// ELEMENTS
-// =====================================
+let currentReportData = null;
+let allReportsCache = [];
 
-const generateBtn = document.getElementById("generateBtn");
+document.addEventListener("DOMContentLoaded", () => {
+    initReportsPage();
+});
 
-const topicInput = document.getElementById("topic");
+async function initReportsPage() {
+    setupEventListeners();
+    await loadHistory();
 
-const report = document.getElementById("report");
+    // Check query params (e.g. from Dashboard click)
+    const urlParams = new URLSearchParams(window.location.search);
+    const topicParam = urlParams.get("topic");
+    const idParam = urlParams.get("id");
 
-const loading = document.getElementById("loading");
+    if (idParam) {
+        openReportById(parseInt(idParam));
+    } else if (topicParam) {
+        document.getElementById("topicInput").value = topicParam;
+        generateReport();
+    }
+}
 
-const copyBtn = document.getElementById("copyBtn");
+function setupEventListeners() {
+    const generateBtn = document.getElementById("generateReportBtn");
+    const topicInput = document.getElementById("topicInput");
+    const newReportBtn = document.getElementById("newReportBtn");
+    const searchInput = document.getElementById("historySearchInput");
+    const copyBtn = document.getElementById("copyReportBtn");
+    const favBtn = document.getElementById("favoriteBtn");
+    const exportPdf = document.getElementById("exportPdfBtn");
+    const exportDocx = document.getElementById("exportDocxBtn");
+    const exportMd = document.getElementById("exportMdBtn");
 
+    if (generateBtn) generateBtn.onclick = generateReport;
+    if (topicInput) {
+        topicInput.addEventListener("keydown", (e) => {
+            if (e.key === "Enter") generateReport();
+        });
+    }
 
-// =====================================
-// GENERATE REPORT
-// =====================================
+    if (newReportBtn) {
+        newReportBtn.onclick = () => {
+            currentReportData = null;
+            document.getElementById("topicInput").value = "";
+            document.getElementById("topicInput").focus();
+            updateReportViewer(null);
+        };
+    }
 
-if (generateBtn) {
+    if (searchInput) {
+        searchInput.addEventListener("input", (e) => {
+            filterHistoryList(e.target.value);
+        });
+    }
 
-    generateBtn.onclick = async () => {
-
-        const topic = topicInput.value.trim();
-
-        if (topic === "") {
-
-            alert("Please enter a research topic.");
-
-            return;
-
-        }
-
-        loading.style.display = "block";
-
-        report.innerHTML = "";
-
-        generateBtn.disabled = true;
-
-        try {
-
-            const response = await fetch("/generate", {
-
-                method: "POST",
-
-                headers: {
-
-                    "Content-Type": "application/json"
-
-                },
-
-                body: JSON.stringify({
-
-                    topic: topic
-
-                })
-
-            });
-
-            const data = await response.json();
-
-            loading.style.display = "none";
-
-            generateBtn.disabled = false;
-
-            if (data.error) {
-
-                report.innerHTML = `
-                    <div class="alert alert-danger">
-                        ${data.error}
-                    </div>
-                `;
-
-                return;
-
+    if (copyBtn) {
+        copyBtn.onclick = () => {
+            if (currentReportData && currentReportData.report) {
+                copyToClipboard(currentReportData.report, copyBtn);
             }
+        };
+    }
 
-            report.innerHTML = marked.parse(data.report);
+    if (favBtn) {
+        favBtn.onclick = toggleCurrentFavorite;
+    }
 
-            loadHistory();
-
-            loadStats();
-
-        }
-
-        catch (err) {
-
-            loading.style.display = "none";
-
-            generateBtn.disabled = false;
-
-            report.innerHTML = `
-                <div class="alert alert-danger">
-                    ${err}
-                </div>
-            `;
-
-        }
-
-    };
-
+    if (exportPdf) exportPdf.onclick = () => triggerExport("pdf");
+    if (exportDocx) exportDocx.onclick = () => triggerExport("docx");
+    if (exportMd) exportMd.onclick = () => triggerExport("markdown");
 }
 
+function setPreset(topic) {
+    const input = document.getElementById("topicInput");
+    if (input) {
+        input.value = topic;
+        input.focus();
+    }
+}
 
-// =====================================
-// COPY REPORT
-// =====================================
+async function generateReport() {
+    const topicInput = document.getElementById("topicInput");
+    const generateBtn = document.getElementById("generateReportBtn");
+    const progressCard = document.getElementById("generationProgressCard");
+    const topic = topicInput.value.trim();
 
-if (copyBtn) {
+    if (!topic) {
+        showToast("Please enter a research topic first.", "warning");
+        topicInput.focus();
+        return;
+    }
 
-    copyBtn.onclick = () => {
+    // UI Loading State
+    generateBtn.disabled = true;
+    generateBtn.innerHTML = `<span class="spinner-border spinner-border-sm me-2"></span> Synthesizing...`;
+    progressCard.classList.remove("d-none");
 
-        const text = report.innerText.trim();
+    try {
+        const res = await fetch("/generate", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ topic: topic })
+        });
 
-        if (text === "") {
-
-            alert("No report available.");
-
-            return;
-
+        const data = await res.json();
+        if (!res.ok || data.error) {
+            throw new Error(data.error || "Synthesis failed");
         }
 
-        navigator.clipboard.writeText(text);
+        currentReportData = {
+            id: data.id,
+            topic: data.topic,
+            report: data.report,
+            favorite: 0
+        };
 
-        copyBtn.innerHTML = `
-            <i class="bi bi-check-circle"></i>
-            Copied
-        `;
-
-        setTimeout(() => {
-
-            copyBtn.innerHTML = `
-                <i class="bi bi-clipboard"></i>
-                Copy
-            `;
-
-        }, 2000);
-
-    };
-
+        updateReportViewer(currentReportData);
+        showToast("Research Report generated successfully!", "success");
+        await loadHistory();
+    } catch (err) {
+        console.error(err);
+        showToast(err.message, "error");
+    } finally {
+        generateBtn.disabled = false;
+        generateBtn.innerHTML = `<i class="bi bi-magic"></i> Generate Report`;
+        progressCard.classList.add("d-none");
+    }
 }
-// =====================================
-// LOAD REPORT HISTORY
-// =====================================
 
 async function loadHistory() {
+    const container = document.getElementById("historyListContainer");
+    if (!container) return;
 
-    const history = document.getElementById("history");
+    try {
+        const res = await fetch("/history");
+        if (!res.ok) throw new Error("Failed to load history");
+        allReportsCache = await res.json();
+        renderHistoryList(allReportsCache);
+    } catch (e) {
+        console.error(e);
+        container.innerHTML = `<div class="alert alert-danger py-2 small mb-0">Error loading history</div>`;
+    }
+}
 
-    if (!history)
+function renderHistoryList(reports) {
+    const container = document.getElementById("historyListContainer");
+    if (!container) return;
+
+    if (!reports || reports.length === 0) {
+        container.innerHTML = `
+            <div class="empty-state-pro py-4">
+                <i class="bi bi-inbox fs-2"></i>
+                <p class="small">No reports saved yet.</p>
+            </div>
+        `;
         return;
-
-    try {
-
-        const response = await fetch("/history");
-
-        const reports = await response.json();
-
-        history.innerHTML = "";
-
-        if (reports.length === 0) {
-
-            history.innerHTML = `
-                <div class="text-center text-secondary p-3">
-                    No reports available.
-                </div>
-            `;
-
-            return;
-
-        }
-
-        reports.forEach(reportItem => {
-
-            const row = document.createElement("div");
-
-            row.className = "history-item";
-
-            row.innerHTML = `
-
-                <span class="report-name">
-
-                    ${reportItem.favorite ? "⭐" : "📄"}
-
-                    ${reportItem.topic}
-
-                </span>
-
-                <div>
-
-                    <button
-                        class="btn btn-warning btn-sm favorite-btn">
-
-                        ⭐
-
-                    </button>
-
-                    <button
-                        class="btn btn-danger btn-sm delete-btn">
-
-                        🗑
-
-                    </button>
-
-                </div>
-
-            `;
-
-            row.querySelector(".report-name")
-                .addEventListener("click", () => {
-
-                    openReport(reportItem.id);
-
-                });
-
-            row.querySelector(".favorite-btn")
-                .addEventListener("click", () => {
-
-                    favoriteReport(reportItem.id);
-
-                });
-
-            row.querySelector(".delete-btn")
-                .addEventListener("click", () => {
-
-                    deleteReport(reportItem.id);
-
-                });
-
-            history.appendChild(row);
-
-        });
-
     }
 
-    catch (err) {
+    let html = "";
+    reports.forEach(r => {
+        const isCurrent = currentReportData && currentReportData.id === r.id;
+        const starClass = r.favorite ? "bi-star-fill fav-active" : "bi-star";
 
-        console.log(err);
+        html += `
+            <div class="history-item-pro ${isCurrent ? 'active' : ''}" id="history-row-${r.id}" onclick="openReportById(${r.id})">
+                <div class="history-text" title="${r.topic}">
+                    <i class="bi bi-file-earmark-text me-1 text-muted"></i>
+                    ${r.topic}
+                </div>
+                <div class="history-actions" onclick="event.stopPropagation()">
+                    <button type="button" class="btn-icon-tiny ${r.favorite ? 'fav-active' : ''}" onclick="toggleFavorite(${r.id})" title="Favorite">
+                        <i class="bi ${starClass}"></i>
+                    </button>
+                    <button type="button" class="btn-icon-tiny delete-hover" onclick="deleteReport(${r.id})" title="Delete">
+                        <i class="bi bi-trash3"></i>
+                    </button>
+                </div>
+            </div>
+        `;
+    });
 
-    }
-
+    container.innerHTML = html;
 }
 
-
-// =====================================
-// OPEN REPORT
-// =====================================
-
-async function openReport(id) {
-
-    try {
-
-        const response = await fetch(`/report/${id}`);
-
-        const data = await response.json();
-
-        if (data.error) {
-
-            alert(data.error);
-
-            return;
-
-        }
-
-        report.innerHTML = marked.parse(data.report);
-
+function filterHistoryList(query) {
+    if (!query || !query.trim()) {
+        renderHistoryList(allReportsCache);
+        return;
     }
-
-    catch (err) {
-
-        console.log(err);
-
-    }
-
+    const q = query.toLowerCase();
+    const filtered = allReportsCache.filter(r => r.topic.toLowerCase().includes(q));
+    renderHistoryList(filtered);
 }
 
+async function openReportById(id) {
+    try {
+        const res = await fetch(`/report/${id}`);
+        const data = await res.json();
+        if (!res.ok || data.error) throw new Error(data.error || "Report not found");
 
-// =====================================
-// DELETE REPORT
-// =====================================
+        currentReportData = data;
+        updateReportViewer(data);
+
+        // Update active class in sidebar
+        document.querySelectorAll(".history-item-pro").forEach(el => el.classList.remove("active"));
+        const activeRow = document.getElementById(`history-row-${id}`);
+        if (activeRow) activeRow.classList.add("active");
+    } catch (e) {
+        showToast(e.message, "error");
+    }
+}
+
+function updateReportViewer(reportData) {
+    const titleEl = document.getElementById("currentReportTopicTitle");
+    const contentArea = document.getElementById("reportContentArea");
+    const favBtn = document.getElementById("favoriteBtn");
+    const copyBtn = document.getElementById("copyReportBtn");
+    const exportBtn = document.getElementById("exportDropdownBtn");
+
+    if (!reportData) {
+        titleEl.innerHTML = `<i class="bi bi-file-earmark-text text-primary"></i> <span>Research Report Preview</span>`;
+        contentArea.innerHTML = `
+            <div class="empty-state-pro py-5">
+                <i class="bi bi-journal-text display-4 text-muted"></i>
+                <h4>No Report Displayed</h4>
+                <p>Enter a topic above and click <strong>Generate Report</strong>, or select an existing survey from your history.</p>
+            </div>
+        `;
+        favBtn.disabled = true;
+        copyBtn.disabled = true;
+        exportBtn.disabled = true;
+        return;
+    }
+
+    titleEl.innerHTML = `<i class="bi bi-file-earmark-check-fill text-success"></i> <span>${reportData.topic}</span>`;
+    contentArea.innerHTML = `<div class="markdown-body-pro">${renderMarkdown(reportData.report)}</div>`;
+
+    favBtn.disabled = false;
+    copyBtn.disabled = false;
+    exportBtn.disabled = false;
+
+    // Update favorite button icon
+    if (reportData.favorite) {
+        favBtn.innerHTML = `<i class="bi bi-star-fill text-warning"></i>`;
+    } else {
+        favBtn.innerHTML = `<i class="bi bi-star"></i>`;
+    }
+}
+
+async function toggleCurrentFavorite() {
+    if (!currentReportData) return;
+    await toggleFavorite(currentReportData.id);
+}
+
+async function toggleFavorite(id) {
+    try {
+        const res = await fetch(`/favorite/${id}`, { method: "POST" });
+        if (!res.ok) throw new Error("Failed to favorite");
+
+        if (currentReportData && currentReportData.id === id) {
+            currentReportData.favorite = currentReportData.favorite ? 0 : 1;
+            const favBtn = document.getElementById("favoriteBtn");
+            favBtn.innerHTML = currentReportData.favorite 
+                ? `<i class="bi bi-star-fill text-warning"></i>` 
+                : `<i class="bi bi-star"></i>`;
+        }
+
+        await loadHistory();
+    } catch (e) {
+        showToast("Error updating favorite", "error");
+    }
+}
 
 async function deleteReport(id) {
+    if (!confirm("Are you sure you want to delete this research report?")) return;
 
-    if (!confirm("Delete this report?"))
+    try {
+        const res = await fetch(`/delete/${id}`, { method: "DELETE" });
+        if (!res.ok) throw new Error("Delete failed");
+
+        showToast("Report deleted", "info");
+
+        if (currentReportData && currentReportData.id === id) {
+            currentReportData = null;
+            updateReportViewer(null);
+        }
+
+        await loadHistory();
+    } catch (e) {
+        showToast("Error deleting report", "error");
+    }
+}
+
+async function triggerExport(format) {
+    if (!currentReportData || !currentReportData.report) {
+        showToast("No report content to export", "warning");
         return;
+    }
+
+    showToast(`Generating ${format.toUpperCase()} export...`, "info");
 
     try {
-
-        const response = await fetch(`/delete/${id}`, {
-
-            method: "DELETE"
-
+        const res = await fetch(`/export/${format}`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+                report: currentReportData.report,
+                title: currentReportData.topic
+            })
         });
 
-        const data = await response.json();
-
-        if (data.error) {
-
-            alert(data.error);
-
-            return;
-
+        if (!res.ok) {
+            const err = await res.json().catch(() => ({}));
+            throw new Error(err.error || "Export failed");
         }
 
-        report.innerHTML = "";
-
-        loadHistory();
-
-        loadStats();
-
+        const blob = await res.blob();
+        const extension = format === "markdown" ? "md" : format;
+        const filename = `${currentReportData.topic.substring(0, 30).replace(/[^a-zA-Z0-9_-]/g, "_")}_Report.${extension}`;
+        downloadBlob(blob, filename);
+        showToast(`${format.toUpperCase()} downloaded successfully!`, "success");
+    } catch (e) {
+        showToast(e.message, "error");
     }
-
-    catch (err) {
-
-        console.log(err);
-
-    }
-
 }
-
-
-// =====================================
-// FAVORITE REPORT
-// =====================================
-
-async function favoriteReport(id) {
-
-    try {
-
-        const response = await fetch(`/favorite/${id}`, {
-
-            method: "POST"
-
-        });
-
-        const data = await response.json();
-
-        if (data.error) {
-
-            alert(data.error);
-
-            return;
-
-        }
-
-        loadHistory();
-
-        loadStats();
-
-    }
-
-    catch (err) {
-
-        console.log(err);
-
-    }
-
-}
-// =====================================
-// EXPORT PDF
-// =====================================
-
-const pdfBtn = document.getElementById("pdfBtn");
-
-if (pdfBtn) {
-
-    pdfBtn.onclick = async () => {
-
-        const text = report.innerText.trim();
-
-        if (text === "") {
-
-            alert("No report available.");
-
-            return;
-
-        }
-
-        pdfBtn.disabled = true;
-
-        pdfBtn.innerHTML = `
-            <span class="spinner-border spinner-border-sm"></span>
-            Exporting...
-        `;
-
-        try {
-
-            const response = await fetch("/export/pdf", {
-
-                method: "POST",
-
-                headers: {
-
-                    "Content-Type": "application/json"
-
-                },
-
-                body: JSON.stringify({
-
-                    report: text
-
-                })
-
-            });
-
-            if (!response.ok) {
-
-                throw new Error("PDF export failed.");
-
-            }
-
-            const blob = await response.blob();
-
-            const url = window.URL.createObjectURL(blob);
-
-            const a = document.createElement("a");
-
-            a.href = url;
-
-            a.download = "Research_Report.pdf";
-
-            document.body.appendChild(a);
-
-            a.click();
-
-            a.remove();
-
-            window.URL.revokeObjectURL(url);
-
-        }
-
-        catch (err) {
-
-            alert(err.message);
-
-        }
-
-        finally {
-
-            pdfBtn.disabled = false;
-
-            pdfBtn.innerHTML = `
-                <i class="bi bi-file-earmark-pdf"></i>
-                PDF
-            `;
-
-        }
-
-    };
-
-}
-
-
-// =====================================
-// EXPORT WORD
-// =====================================
-
-const docBtn = document.getElementById("docBtn");
-
-if (docBtn) {
-
-    docBtn.onclick = async () => {
-
-        const text = report.innerText.trim();
-
-        if (text === "") {
-
-            alert("No report available.");
-
-            return;
-
-        }
-
-        docBtn.disabled = true;
-
-        docBtn.innerHTML = `
-            <span class="spinner-border spinner-border-sm"></span>
-            Exporting...
-        `;
-
-        try {
-
-            const response = await fetch("/export/docx", {
-
-                method: "POST",
-
-                headers: {
-
-                    "Content-Type": "application/json"
-
-                },
-
-                body: JSON.stringify({
-
-                    report: text
-
-                })
-
-            });
-
-            if (!response.ok) {
-
-                throw new Error("Word export failed.");
-
-            }
-
-            const blob = await response.blob();
-
-            const url = window.URL.createObjectURL(blob);
-
-            const a = document.createElement("a");
-
-            a.href = url;
-
-            a.download = "Research_Report.docx";
-
-            document.body.appendChild(a);
-
-            a.click();
-
-            a.remove();
-
-            window.URL.revokeObjectURL(url);
-
-        }
-
-        catch (err) {
-
-            alert(err.message);
-
-        }
-
-        finally {
-
-            docBtn.disabled = false;
-
-            docBtn.innerHTML = `
-                <i class="bi bi-file-earmark-word"></i>
-                Word
-            `;
-
-        }
-
-    };
-
-}
-// =====================================
-// DASHBOARD STATISTICS
-// =====================================
-
-async function loadStats() {
-
-    try {
-
-        const response = await fetch("/stats");
-
-        const stats = await response.json();
-
-        const totalReports = document.getElementById("totalReports");
-
-        const todayReports = document.getElementById("todayReports");
-
-        const favoriteReports = document.getElementById("favoriteReports");
-
-        if (totalReports)
-            totalReports.innerHTML = stats.total;
-
-        if (todayReports)
-            todayReports.innerHTML = stats.today;
-
-        if (favoriteReports)
-            favoriteReports.innerHTML = stats.favorites;
-
-    }
-
-    catch (err) {
-
-        console.log(err);
-
-    }
-
-}
-
-
-// =====================================
-// SEARCH REPORTS
-// =====================================
-
-const search = document.getElementById("search");
-
-if (search) {
-
-    search.addEventListener("keyup", function () {
-
-        const value = this.value.toLowerCase();
-
-        document.querySelectorAll(".history-item").forEach(item => {
-
-            item.style.display =
-
-                item.innerText.toLowerCase().includes(value)
-
-                    ? "flex"
-
-                    : "none";
-
-        });
-
-    });
-
-}
-
-
-// =====================================
-// NEW REPORT
-// =====================================
-
-const newChat = document.getElementById("newChat");
-
-if (newChat) {
-
-    newChat.onclick = () => {
-
-        if (topicInput)
-            topicInput.value = "";
-
-        if (report)
-            report.innerHTML = "";
-
-        if (topicInput)
-            topicInput.focus();
-
-    };
-
-}
-
-
-// =====================================
-// CLEAR REPORT
-// =====================================
-
-function clearReport() {
-
-    if (topicInput)
-        topicInput.value = "";
-
-    if (report)
-        report.innerHTML = "";
-
-}
-
-
-// =====================================
-// REFRESH REPORTS
-// =====================================
-
-function refreshReports() {
-
-    loadHistory();
-
-    loadStats();
-
-}
-
-
-// =====================================
-// ENTER KEY SUPPORT
-// =====================================
-
-if (topicInput) {
-
-    topicInput.addEventListener("keypress", function (event) {
-
-        if (event.key === "Enter") {
-
-            generateBtn.click();
-
-        }
-
-    });
-
-}
-
-
-// =====================================
-// INITIAL LOAD
-// =====================================
-
-window.addEventListener("DOMContentLoaded", () => {
-
-    console.log("Reports Module Loaded");
-
-    loadHistory();
-
-    loadStats();
-
-});

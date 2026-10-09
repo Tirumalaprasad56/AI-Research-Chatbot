@@ -1,446 +1,84 @@
-<!DOCTYPE html>
-<html lang="en">
+{% extends "base.html" %}
 
-<head>
+{% block title %}Research Papers & Document Library{% endblock %}
+{% block page_heading %}Research Papers Library{% endblock %}
+{% block page_subheading %}Manage, inspect, and organize all uploaded research papers, datasets, and articles{% endblock %}
 
-<meta charset="UTF-8">
+{% block content %}
+<div class="row g-4">
+    <!-- Left Column: Upload & Papers List -->
+    <div class="col-lg-4">
+        <!-- Upload Card -->
+        <div class="card-pro mb-4">
+            <div class="card-pro-header">
+                <h3 class="card-pro-title">
+                    <i class="bi bi-file-earmark-arrow-up-fill text-primary"></i>
+                    Add Research Paper
+                </h3>
+            </div>
+            <div class="card-pro-body">
+                <div class="mb-3">
+                    <label class="form-label text-muted small">Select PDF, Word, or TXT file</label>
+                    <input type="file" id="paperFileInput" class="form-control-pro" accept=".pdf,.docx,.txt">
+                </div>
+                <button id="uploadPaperBtn" class="btn-pro btn-pro-primary w-100">
+                    <i class="bi bi-cloud-arrow-up"></i> Upload Paper
+                </button>
+            </div>
+        </div>
 
-<meta name="viewport"
-content="width=device-width, initial-scale=1.0">
+        <!-- Papers List -->
+        <div class="card-pro">
+            <div class="card-pro-header">
+                <h3 class="card-pro-title">
+                    <i class="bi bi-collection text-info"></i>
+                    Indexed Papers
+                </h3>
+                <span class="badge bg-secondary bg-opacity-25 text-light" id="paperCountBadge">0 files</span>
+            </div>
+            <div class="card-pro-body">
+                <div class="mb-3">
+                    <input type="text" id="paperSearchInput" class="form-control-pro" placeholder="Filter papers...">
+                </div>
+                <div id="paperListContainer" style="max-height: 520px; overflow-y: auto;">
+                    <div class="empty-state-pro py-4">
+                        <div class="spinner-border text-primary spinner-border-sm mb-2" role="status"></div>
+                        <p class="small">Loading library...</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 
-<title>Research Papers</title>
+    <!-- Right Column: Document Deep Reader & Quick Actions -->
+    <div class="col-lg-8">
+        <div class="card-pro h-100">
+            <div class="card-pro-header flex-wrap gap-2">
+                <div class="d-flex align-items-center gap-2">
+                    <i class="bi bi-journal-richtext text-primary fs-5"></i>
+                    <h3 class="card-pro-title" id="activePaperTitle">Select a Paper to Read</h3>
+                </div>
+                <div class="d-flex align-items-center gap-2" id="paperActionButtons">
+                    <a href="/analyzer" class="btn-pro btn-pro-primary btn-sm" id="openInAnalyzerBtn">
+                        <i class="bi bi-cpu"></i> Open in Analyzer
+                    </a>
+                </div>
+            </div>
 
-<link
-href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
-rel="stylesheet">
-
-<link
-rel="stylesheet"
-href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
-
-<link
-rel="stylesheet"
-href="{{ url_for('static', filename='css/documents.css') }}">
-
-</head>
-
-<body>
-
-<div class="app-container">
-
-<!-- ===================== -->
-<!-- SIDEBAR -->
-<!-- ===================== -->
-
-<aside class="sidebar">
-
-<div class="logo">
-
-🤖 AI Research
-
+            <div class="card-pro-body">
+                <div id="paperReaderArea" class="p-3 rounded-3" style="background:var(--bg-input); border:1px solid var(--border-subtle); min-height: 520px; max-height: 680px; overflow-y: auto;">
+                    <div class="empty-state-pro py-5">
+                        <i class="bi bi-journal-text display-3 text-muted"></i>
+                        <h4 class="mt-3">No Paper Loaded</h4>
+                        <p>Upload a new paper or click any document in the list to read its complete text content.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
+{% endblock %}
 
-<ul>
-
-<li>
-
-<a href="/dashboard">
-
-<i class="bi bi-grid-fill"></i>
-
-Dashboard
-
-</a>
-
-</li>
-
-<li>
-
-<a href="/reports">
-
-<i class="bi bi-file-earmark-text-fill"></i>
-
-AI Reports
-
-</a>
-
-</li>
-
-<li>
-
-<a href="/presentation">
-
-<i class="bi bi-file-earmark-ppt-fill"></i>
-
-Presentation
-
-</a>
-
-</li>
-
-<li>
-
-<a href="/analyzer">
-
-<i class="bi bi-search"></i>
-
-Document Analyzer
-
-</a>
-
-</li>
-
-<li class="active">
-
-
-</li>
-
-<li>
-
-<a href="/chat">
-
-<i class="bi bi-robot"></i>
-
-AI Chat
-
-</a>
-
-</li>
-
-<li>
-
-<a href="/logout">
-
-<i class="bi bi-box-arrow-right"></i>
-
-Logout
-
-</a>
-
-</li>
-
-</ul>
-
-</aside>
-
-<!-- ===================== -->
-<!-- MAIN -->
-<!-- ===================== -->
-
-<main class="main">
-
-<div class="topbar">
-
-<div>
-
-<h2>
-
-Research Papers
-
-</h2>
-
-<p>
-
-Upload research papers and analyze them using AI.
-
-</p>
-
-</div>
-
-<div class="profile">
-
-👋 {{ username }}
-
-</div>
-
-</div>
-
-<!-- ===================== -->
-<!-- Upload + Preview -->
-<!-- ===================== -->
-
-<div class="workspace-row">
-
-<!-- Upload -->
-
-<div class="card workspace-card">
-
-<div class="card-header">
-
-<i class="bi bi-cloud-upload-fill"></i>
-
-Upload Research Paper
-
-</div>
-
-<div class="card-body">
-
-<input
-
-type="file"
-
-id="paperFile"
-
-class="form-control"
-
-accept=".pdf,.docx,.txt">
-
-<button
-
-id="uploadPaperBtn"
-
-class="btn btn-primary w-100 mt-3">
-
-<i class="bi bi-upload"></i>
-
-Upload Paper
-
-</button>
-
-<hr>
-
-<h6>
-
-Uploaded Papers
-
-</h6>
-
-<div id="paperList">
-
-No uploaded papers.
-
-</div>
-
-</div>
-
-</div>
-
-<!-- Preview -->
-
-<div class="card workspace-card">
-
-<div class="card-header">
-
-<i class="bi bi-file-earmark-text"></i>
-
-Paper Preview
-
-</div>
-
-<div
-
-id="paperPreview"
-
-class="card-body preview-area">
-
-<div class="empty-state">
-
-<i class="bi bi-journal display-1"></i>
-
-<h4>
-
-No Paper Selected
-
-</h4>
-
-<p>
-
-Select a research paper to preview.
-
-</p>
-
-</div>
-
-</div>
-
-</div>
-
-</div>
-
-<!-- ===================== -->
-<!-- Analysis -->
-<!-- ===================== -->
-
-<div class="workspace-row">
-
-<!-- Tools -->
-
-<div class="card workspace-card">
-
-<div class="card-header">
-
-AI Research Tools
-
-</div>
-
-<div class="card-body">
-
-<div class="analysis-grid">
-
-<button
-id="noveltyBtn"
-class="tool-card">
-
-<i class="bi bi-lightbulb"></i>
-
-<span>Novelty</span>
-
-</button>
-
-<button
-id="gapBtn"
-class="tool-card">
-
-<i class="bi bi-search"></i>
-
-<span>Research Gap</span>
-
-</button>
-
-<button
-id="methodBtn"
-class="tool-card">
-
-<i class="bi bi-diagram-3"></i>
-
-<span>Methodology</span>
-
-</button>
-
-<button
-id="futureBtn"
-class="tool-card">
-
-<i class="bi bi-arrow-repeat"></i>
-
-<span>Future Work</span>
-
-</button>
-
-<button
-id="limitBtn"
-class="tool-card">
-
-<i class="bi bi-exclamation-circle"></i>
-
-<span>Limitations</span>
-
-</button>
-
-<button
-id="referenceBtn"
-class="tool-card">
-
-<i class="bi bi-book"></i>
-
-<span>References</span>
-
-</button>
-
-</div>
-
-</div>
-
-</div>
-
-<!-- Result -->
-
-<div class="card workspace-card">
-
-<div class="card-header">
-
-AI Analysis Result
-
-</div>
-
-<div
-
-id="paperResult"
-
-class="card-body result-area">
-
-<div class="empty-state">
-
-<i class="bi bi-robot display-1"></i>
-
-<h4>
-
-Research Analysis
-
-</h4>
-
-<p>
-
-Select one of the AI tools to analyze the paper.
-
-</p>
-
-</div>
-
-</div>
-
-</div>
-
-</div>
-
-<!-- ===================== -->
-<!-- Ask AI -->
-<!-- ===================== -->
-
-<div class="card workspace-card">
-
-<div class="card-header">
-
-<i class="bi bi-chat-left-text-fill"></i>
-
-Ask AI About Research Paper
-
-</div>
-
-<div class="card-body">
-
-<textarea
-
-id="paperQuestion"
-
-class="form-control"
-
-rows="4"
-
-placeholder="Ask anything about this research paper...">
-
-</textarea>
-
-<button
-
-id="askPaperBtn"
-
-class="btn btn-success mt-3">
-
-<i class="bi bi-send-fill"></i>
-
-Ask AI
-
-</button>
-
-<hr>
-
-<div id="paperAnswer">
-
-</div>
-
-</div>
-
-</div>
-
-</main>
-
-</div>
-
-<script src="{{ url_for('static', filename='js/common.js') }}"></script>
-
+{% block scripts %}
 <script src="{{ url_for('static', filename='js/documents.js') }}"></script>
-
-</body>
-
-</html>
+{% endblock %}
