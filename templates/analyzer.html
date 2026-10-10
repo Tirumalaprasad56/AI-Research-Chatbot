@@ -1,9 +1,7 @@
 {% extends "base.html" %}
-
 {% block title %}Research Document & Paper Analyzer{% endblock %}
 {% block page_heading %}Document & Paper Analyzer{% endblock %}
 {% block page_subheading %}Upload academic papers, dissertations, and technical documents for AI deep-dive extraction{% endblock %}
-
 {% block content %}
 <div class="row g-4 mb-4">
     <!-- Left Column: Document Upload & Library -->
@@ -17,15 +15,35 @@
                 </h3>
             </div>
             <div class="card-pro-body">
-                <div class="upload-dropzone p-4 text-center rounded-3 border-2 border-dashed mb-3" id="dropzoneArea" style="border: 2px dashed var(--border-subtle); background: var(--bg-input); cursor: pointer; transition: var(--transition);">
+                <!-- File input must stay outside dropzoneArea -->
+                <div
+                    class="upload-dropzone p-4 text-center rounded-3 border-2 border-dashed mb-3"
+                    id="dropzoneArea"
+                    role="button"
+                    tabindex="0"
+                    aria-label="Select a document to upload"
+                    style="border: 2px dashed var(--border-subtle); background: var(--bg-input); cursor: pointer; transition: var(--transition);"
+                >
                     <i class="bi bi-file-earmark-arrow-up display-4 text-primary mb-2 d-inline-block"></i>
                     <h6 class="text-light mb-1">Click to browse or drop file here</h6>
-                    <p class="text-muted small mb-0">PDF (.pdf), Word (.docx), or Text (.txt) up to 32MB</p>
-                    <input type="file" id="documentFileInput" class="d-none" accept=".pdf,.docx,.txt">
+                    <p class="text-muted small mb-0">
+                        PDF (.pdf), Word (.docx), or Text (.txt) up to 32MB
+                    </p>
                 </div>
-
-                <button id="uploadDocumentBtn" class="btn-pro btn-pro-primary w-100 py-2" disabled>
-                    <i class="bi bi-upload"></i> Upload & Parse Document
+                <input
+    type="file"
+    id="documentFileInput"
+    class="d-none"
+    accept=".pdf,.docx,.txt"
+>
+                <button
+                    type="button"
+                    id="uploadDocumentBtn"
+                    class="btn-pro btn-pro-primary w-100 py-2"
+                    disabled
+                >
+                    <i class="bi bi-upload"></i>
+                    Upload &amp; Parse Document
                 </button>
             </div>
         </div>
@@ -37,11 +55,20 @@
                     <i class="bi bi-folder2-open text-info"></i>
                     Document Library
                 </h3>
-                <button type="button" class="btn btn-sm btn-outline-secondary" onclick="loadDocumentList()" title="Refresh">
+                <button
+                    type="button"
+                    class="btn btn-sm btn-outline-secondary"
+                    onclick="loadDocumentList()"
+                    title="Refresh"
+                >
                     <i class="bi bi-arrow-clockwise"></i>
                 </button>
             </div>
-            <div class="card-pro-body" style="max-height: 480px; overflow-y: auto;" id="documentListContainer">
+            <div
+                class="card-pro-body"
+                style="max-height: 480px; overflow-y: auto;"
+                id="documentListContainer"
+            >
                 <div class="empty-state-pro py-4">
                     <div class="spinner-border text-primary spinner-border-sm mb-2" role="status"></div>
                     <p class="small">Loading library...</p>
@@ -50,26 +77,36 @@
         </div>
     </div>
 
-    <!-- Right Column: Document Preview & Active File Details -->
+    <!-- Right Column: Document Preview -->
     <div class="col-lg-8">
         <div class="card-pro h-100">
             <div class="card-pro-header flex-wrap gap-2">
                 <div class="d-flex align-items-center gap-2">
                     <i class="bi bi-file-earmark-richtext-fill text-primary fs-5"></i>
-                    <h3 class="card-pro-title" id="selectedDocTitle">No Document Selected</h3>
+                    <h3 class="card-pro-title" id="selectedDocTitle">
+                        No Document Selected
+                    </h3>
                 </div>
                 <div class="d-flex align-items-center gap-2" id="docMetaPills">
-                    <span class="badge bg-secondary bg-opacity-25 text-light" id="docStatsPill">0 Words</span>
+                    <span class="badge bg-secondary bg-opacity-25 text-light" id="docStatsPill">
+                        0 Words
+                    </span>
                 </div>
             </div>
-
             <div class="card-pro-body d-flex flex-column" style="min-height: 400px;">
-                <div id="documentPreviewContent" class="flex-grow-1 p-3 rounded-3" style="background: var(--bg-input); border: 1px solid var(--border-subtle); max-height: 400px; overflow-y: auto;">
+                <div
+                    id="documentPreviewContent"
+                    class="flex-grow-1 p-3 rounded-3"
+                    style="background: var(--bg-input); border: 1px solid var(--border-subtle); max-height: 400px; overflow-y: auto;"
+                >
                     <div class="empty-state-pro py-5">
                         <i class="bi bi-file-earmark-text display-3 text-muted"></i>
                         <h4 class="mt-3">Document Preview</h4>
-                        <p>Upload a file or choose one from your library on the left to read its extracted text and run AI analysis tools.</p>
-                    </div>
+                        <p>
+                            Upload a file or choose one from your library on the left
+                            to read its extracted text and run AI analysis tools.
+                        </p>
+                                            </div>
                 </div>
             </div>
         </div>
@@ -89,21 +126,42 @@
                 <span class="badge bg-primary bg-opacity-25 text-info">12 Modes</span>
             </div>
             <div class="card-pro-body">
-                <!-- Nav Tabs for Tools -->
+                <!-- Nav Tabs -->
                 <ul class="nav nav-pills mb-3 gap-2" id="analysisTabs" role="tablist">
                     <li class="nav-item">
-                        <button class="nav-link active btn-sm" id="tab-core" data-bs-toggle="pill" data-bs-target="#content-core" type="button">Core Insights</button>
+                        <button
+                            class="nav-link active btn-sm"
+                            id="tab-core"
+                            data-bs-toggle="pill"
+                            data-bs-target="#content-core"
+                            type="button"
+                            role="tab"
+                        >Core Insights</button>
                     </li>
                     <li class="nav-item">
-                        <button class="nav-link btn-sm" id="tab-deep" data-bs-toggle="pill" data-bs-target="#content-deep" type="button">Academic Deep-Dive</button>
+                        <button
+                            class="nav-link btn-sm"
+                            id="tab-deep"
+                            data-bs-toggle="pill"
+                            data-bs-target="#content-deep"
+                            type="button"
+                            role="tab"
+                        >Academic Deep-Dive</button>
                     </li>
                     <li class="nav-item">
-                        <button class="nav-link btn-sm" id="tab-learning" data-bs-toggle="pill" data-bs-target="#content-learning" type="button">Learning & Viva</button>
+                        <button
+                            class="nav-link btn-sm"
+                            id="tab-learning"
+                            data-bs-toggle="pill"
+                            data-bs-target="#content-learning"
+                            type="button"
+                            role="tab"
+                        >Learning &amp; Viva</button>
                     </li>
                 </ul>
 
                 <div class="tab-content" id="analysisTabContent">
-                    <!-- Tab 1: Core Insights -->
+                    <!-- Core Insights -->
                     <div class="tab-pane fade show active" id="content-core" role="tabpanel">
                         <div class="d-grid gap-2" style="grid-template-columns: repeat(2, 1fr);">
                             <button class="btn-pro btn-pro-secondary text-start py-3" onclick="triggerAnalysis('summary')">
@@ -129,7 +187,7 @@
                         </div>
                     </div>
 
-                    <!-- Tab 2: Academic Deep Dive -->
+                    <!-- Academic Deep-Dive -->
                     <div class="tab-pane fade" id="content-deep" role="tabpanel">
                         <div class="d-grid gap-2" style="grid-template-columns: repeat(2, 1fr);">
                             <button class="btn-pro btn-pro-secondary text-start py-3" onclick="triggerAnalysis('methodology')">
@@ -164,14 +222,13 @@
                             </button>
                         </div>
                     </div>
-
-                    <!-- Tab 3: Learning & Viva Prep -->
+                                        <!-- Learning & Viva Prep -->
                     <div class="tab-pane fade" id="content-learning" role="tabpanel">
                         <div class="d-grid gap-2" style="grid-template-columns: repeat(2, 1fr);">
                             <button class="btn-pro btn-pro-secondary text-start py-3" onclick="triggerAnalysis('quiz')">
                                 <i class="bi bi-patch-question-fill text-info fs-5 d-block mb-1"></i>
                                 <span class="fw-bold d-block text-white">Interactive Quiz</span>
-                                <small class="text-muted">10 Q&A with answer key</small>
+                                <small class="text-muted">10 Q&amp;A with answer key</small>
                             </button>
                             <button class="btn-pro btn-pro-secondary text-start py-3" onclick="triggerAnalysis('interview')">
                                 <i class="bi bi-person-video3 text-success fs-5 d-block mb-1"></i>
@@ -190,11 +247,24 @@
                 <hr class="border-secondary my-4">
 
                 <!-- Grounded Ask AI Box -->
-                <h5 class="text-white mb-2"><i class="bi bi-chat-left-dots text-primary me-2"></i>Ask Document Specific Question</h5>
+                <h5 class="text-white mb-2">
+                    <i class="bi bi-chat-left-dots text-primary me-2"></i>
+                    Ask Document Specific Question
+                </h5>
                 <div class="input-group">
-                    <input type="text" id="documentQuestionInput" class="form-control-pro" placeholder="e.g. What dataset was used? What were the benchmark F1 scores?">
-                    <button id="askDocumentBtn" class="btn-pro btn-pro-primary px-3">
-                        <i class="bi bi-send-fill"></i> Ask AI
+                    <input
+                        type="text"
+                        id="documentQuestionInput"
+                        class="form-control-pro"
+                        placeholder="e.g. What dataset was used? What were the benchmark F1 scores?"
+                    >
+                    <button
+                        type="button"
+                        id="askDocumentBtn"
+                        class="btn-pro btn-pro-primary px-3"
+                    >
+                        <i class="bi bi-send-fill"></i>
+                        Ask AI
                     </button>
                 </div>
             </div>
@@ -207,24 +277,40 @@
             <div class="card-pro-header justify-content-between">
                 <div class="d-flex align-items-center gap-2">
                     <i class="bi bi-cpu text-success fs-5"></i>
-                    <h3 class="card-pro-title" id="analysisResultHeading">AI Analysis Output</h3>
+                    <h3 class="card-pro-title" id="analysisResultHeading">
+                        AI Analysis Output
+                    </h3>
                 </div>
-                <button type="button" class="btn-pro btn-pro-secondary btn-sm" id="copyAnalysisBtn" onclick="copyAnalysisOutput()" disabled>
-                    <i class="bi bi-clipboard"></i> Copy
+                <button
+                    type="button"
+                    class="btn-pro btn-pro-secondary btn-sm"
+                    id="copyAnalysisBtn"
+                    onclick="copyAnalysisOutput()"
+                    disabled
+                >
+                    <i class="bi bi-clipboard"></i>
+                    Copy
                 </button>
             </div>
-            <div class="card-pro-body" style="min-height: 480px; max-height: 620px; overflow-y: auto;">
+            <div
+                class="card-pro-body"
+                style="min-height: 480px; max-height: 620px; overflow-y: auto;"
+            >
                 <div id="analysisResultContent">
                     <div class="empty-state-pro py-5">
                         <i class="bi bi-robot display-3 text-muted"></i>
                         <h4 class="mt-3">Awaiting Analysis</h4>
-                        <p>Select any tool from the suite or ask a question to generate grounded AI insights from your document.</p>
+                        <p>
+                            Select any tool from the suite or ask a question to
+                            generate grounded AI insights from your document.
+                        </p>
                     </div>
                 </div>
             </div>
         </div>
     </div>
 </div>
+
 {% endblock %}
 
 {% block scripts %}

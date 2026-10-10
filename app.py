@@ -167,8 +167,6 @@ def analyzer():
         "analyzer.html",
         username=session["username"]
     )
-
-
 @app.route("/documents")
 @app.route("/documents_page")
 @login_required
